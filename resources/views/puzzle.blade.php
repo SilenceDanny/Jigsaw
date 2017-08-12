@@ -22,6 +22,12 @@
             src="{{ URL::asset('js/renderers/CanvasRenderer.js') }}"></script>
         <script type="text/javascript"
             src="{{ URL::asset('js/libs/stats.min.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/OrbitControls.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/Projector.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/TransformControls.js') }}"></script>
 
         <script>
             var container, stats;
@@ -41,6 +47,13 @@
                 camera.position.set( 0, 100, 800 );
 
                 scene = new THREE.Scene();
+
+                raycaster = new THREE.Raycaster();
+                projector = new THREE.Projector();
+                mouse = new THREE.Vector2();
+
+                document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+                document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
                 // Grid
 
@@ -114,6 +127,15 @@
                 renderer.setClearColor( 0xf0f0f0 );
                 container.appendChild( renderer.domElement );
 
+                transformControl = new THREE.TransformControls(camera,renderer.domElement);
+                transformControl.addEventListener('change',render);
+
+                orbitControl = new THREE.OrbitControls( camera, renderer.domElement );
+                orbitControl.enableDamping = true;
+                orbitControl.dampingFactor = 0.25;
+                orbitControl.enableZoom = true;
+                orbitControl.zoomSpeed = 1;
+
                 stats = new Stats();
                 container.appendChild(stats.dom);
 
@@ -144,6 +166,33 @@
 
             }
 
+            function onDocumentTouchStart( event ) {
+
+            event.preventDefault();
+
+            event.offsetX = event.touches[0].offsetX;
+            event.offsetY = event.touches[0].offsetY;
+            onDocumentMouseUp( event );
+
+            }
+
+            function onDocumentMouseUp( event ) {
+
+                event.preventDefault();
+
+                mouse.x = ( event.offsetX / renderer.domElement.clientWidth ) * 2 - 1;
+                mouse.y = - ( event.offsetY / renderer.domElement.clientHeight ) * 2 + 1;
+
+                raycaster.setFromCamera( mouse, camera );
+
+                var intersects = raycaster.intersectObjects( objects );
+
+                if ( intersects.length > 0 ) {
+                    transformControl.attach(intersects[ 0 ].object);
+                    scene.add(transformControl);
+                }
+            }
+
             //
 
             function animate() {
@@ -157,8 +206,21 @@
 
             function render() {
 
+                orbitControl.update();
                 renderer.render( scene, camera );
 
+            }
+
+            function translate(){
+            transformControl.setMode( "translate" );
+            }
+
+            function rotate(){
+                transformControl.setMode( "rotate" );
+            }
+
+            function scale(){
+                transformControl.setMode( "scale" );
             }
         </script>
 
