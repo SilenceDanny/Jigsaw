@@ -59,7 +59,7 @@
                 mouse = new THREE.Vector2();
 
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-                document.addEventListener( 'touchstart', onDocumentTouchStart, false ); 
+                document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
                 // Grid
 

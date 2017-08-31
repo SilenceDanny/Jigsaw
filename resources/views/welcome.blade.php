@@ -79,20 +79,24 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Upload to Start
                 </div>
 
-                <div class="links">
+                {{-- <div class="links">
                     <a href="https://laravel.com/docs">Documentation</a>
                     <a href="https://laracasts.com">Laracasts</a>
                     <a href="https://laravel-news.com">News</a>
                     <a href="https://forge.laravel.com">Forge</a>
                     <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+                </div> --}}
                 <form action="uploadimg" method="POST"  enctype="multipart/form-data">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    Puzzle Name:<br>
                     <input type="text" name="JigsawName">
+                    <br>
+                    Upload Photo:<br>
                     <input type="file" name="imageSrc">
+                    <br><br>
                     <button type="submit">Submit</button>
                 </form>
             </div>
