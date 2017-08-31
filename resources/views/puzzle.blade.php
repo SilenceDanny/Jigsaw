@@ -59,7 +59,7 @@
                 mouse = new THREE.Vector2();
 
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-                document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+                document.addEventListener( 'touchstart', onDocumentTouchStart, false ); 
 
                 // Grid
 
@@ -178,8 +178,16 @@
                     object.scale.z=1;//缩放级别
                     object.name="haven";//刚体名称
                     object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
-                    objects.push(object);
+
+                     object.traverse(function(child) { 
+                            if (child instanceof THREE.Mesh) { 
+                           objects.push(child);
+                        }
+                    });
+
+                    // objects.push(object);
                     scene.add(object);//添加到场景中
+
                     }
                 //     progress:function(persent){
                 //          
@@ -285,9 +293,9 @@
                 raycaster.setFromCamera( mouse, camera );
 
                 var intersects = raycaster.intersectObjects( objects );
-
+                console.log(intersects);
                 if ( intersects.length > 0 ) {
-                    console.log(intersects[0]);
+                    
                     transformControl.attach(intersects[ 0 ].object);
                     scene.add(transformControl);
                 }
