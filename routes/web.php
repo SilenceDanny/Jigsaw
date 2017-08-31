@@ -20,3 +20,7 @@ Route::post('/uploadimg','Corp\CorpController@Corp');
 Route::get('/puzzle', function(){
 	return view('puzzle');
 });
+
+Route::get('/testobjmtl',function(){
+	return view('testobjmtl');
+});

@@ -130,6 +130,7 @@ class CorpController extends Controller
           //输出到指定文件夹
           // imagepng($dst_image,"../storage/app/".$JigsawName."/".$PartName.".png");
           imagejpeg($dst_image,"../public/puzzleSource/".$JigsawName."/".$PartName.".jpg");
+          imagejpeg($src_image,"../public/objFolder/texture/texture.jpg");
 
           //
           // array_push($ImageData, "/storage/app/".$JigsawName."/".$PartName.".png");

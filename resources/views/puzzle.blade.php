@@ -28,6 +28,12 @@
             src="{{ URL::asset('js/Projector.js') }}"></script>
         <script type="text/javascript"
             src="{{ URL::asset('js/TransformControls.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/DDSLoader.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/MTLLoader.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/OBJLoader.js') }}"></script>
 
         <script>
             var container, stats;
@@ -63,36 +69,129 @@
 
                 // cube
 
-                var geometry = new THREE.BoxGeometry( 100, 20, 100 );
+                // var geometry = new THREE.BoxGeometry( 100, 20, 100 );
 
-                var textureLoader = new THREE.TextureLoader();
+                // var textureLoader = new THREE.TextureLoader();
 
-                var imagepath = new Array();
-                @for($f = 0; $f < count($ImageData); $f++)
-                    imagepath.push('<?php echo $ImageData[$f];?>');
-                @endfor
+                // var imagepath = new Array();
+                // @for($f = 0; $f < count($ImageData); $f++)
+                //     imagepath.push('<?php echo $ImageData[$f];?>');
+                // @endfor
 
-                var materials = new Array();
-                for(var i = 0; i < imagepath.length; i++)
-                {
-                    var tempTexture = textureLoader.load(imagepath[i]);
-                    materials[i] = new THREE.MeshBasicMaterial( {map:tempTexture} );
+                // var materials = new Array();
+                // for(var i = 0; i < imagepath.length; i++)
+                // {
+                //     var tempTexture = textureLoader.load(imagepath[i]);
+                //     materials[i] = new THREE.MeshBasicMaterial( {map:tempTexture} );
+                    
+                // }
+
+                // objects = [];
+
+                // for ( var i = 0, l = materials.length; i < l; i ++ ) {
+
+                //     var cube = new THREE.Mesh( geometry, materials[ i ] );
+
+                //     cube.position.x = ( i % 5 ) * 200 - 400;
+                //     cube.position.z = Math.floor( i / 5 ) * 200 - 200;
+
+                //     objects.push( cube );
+
+                //     scene.add( cube );
+
+                // }
+
+
+                function createMtlObj(options){
+                //      options={
+                //          mtlBaseUrl:"",
+                //          mtlPath:"",
+                //          mtlFileName:"",
+                //          objPath:"",
+                //          objFileName:"",
+                //          completeCallback:function(object){  
+                //          }
+                //          progress:function(persent){
+                //              
+                //          }
+                //      }
+                THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+                var mtlLoader = new THREE.MTLLoader();
+                //     mtlLoader.setBaseUrl( options.mtlBaseUrl );//设置材质路径
+                mtlLoader.setPath( options.mtlPath );//设置mtl文件路径
+                mtlLoader.load( options.mtlFileName, function( materials ) {
+                    materials.preload();
+                    var objLoader = new THREE.OBJLoader();
+                    objLoader.setMaterials( materials );//设置三维对象材质库
+                    objLoader.setPath( options.objPath );//设置obj文件所在目录
+                    objLoader.load( options.objFileName, function ( object ) {
+                        if(typeof options.completeCallback=="function"){
+                            options.completeCallback(object);
+                        }
+                    }, function ( xhr ) {
+                        if ( xhr.lengthComputable ) {
+                            var percentComplete = xhr.loaded / xhr.total * 100;
+                            if(typeof options.progress =="function"){
+                                options.progress( Math.round(percentComplete, 2));
+                            }
+                            //console.log( Math.round(percentComplete, 2) + '% downloaded' );
+                        }
+                    }, function(error){
+
+                    });
+                });
+            }
+
+            objects = [];
+
+            for(var i = 1; i<=5; i++){
+                for(var j = 1; j<=5; j++){
+                    var mtlPath = "board_" + i + "_" + j + ".mtl";
+                    var objPath = "board_" + i + "_" + j + ".obj";
+                    createMtlObj({
+                    //     mtlBaseUrl:"objFolder/",
+                    mtlPath: "objFolder/",
+                    mtlFileName: mtlPath,
+                    objPath:"objFolder/",
+                    objFileName: objPath,
+                    completeCallback:function(object){
+                        object.traverse(function(child) { 
+                            if (child instanceof THREE.Mesh) { 
+                            child.material.side = THREE.DoubleSide;//设置贴图模式为双面贴图
+                            //                 child.material.emissive.r=0;//设置rgb通道R通道颜色
+                            //                 child.material.emissive.g=0.01;//设置rgb通道G通道颜色
+                            //                 child.material.emissive.b=0.05;//设置rgb通道B通道颜色
+                            child.material.transparent=true;//材质允许透明
+                            //child.material.opacity=0;//材质默认透明度                        
+                            child.material.shading=THREE.SmoothShading;//平滑渲染
+                        }
+                    });
+                    object.emissive=0x00ffff;//自发光颜色
+                    object.ambient=0x00ffff;//环境光颜色
+                    //      object.rotation.x= 0;//x轴方向旋转角度
+                    // object.position.y = 0;//位置坐标X
+                    // object.position.z = 0;//位置坐标y
+                    // object.position.x = i*100;
+                    // object.position.z = j*100;
+                    object.scale.x=1;//缩放级别
+                    object.scale.y=1;//缩放级别
+                    object.scale.z=1;//缩放级别
+                    object.name="haven";//刚体名称
+                    object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
+                    objects.push(object);
+                    scene.add(object);//添加到场景中
+                    }
+                //     progress:function(persent){
+                //          
+                //         $("#havenloading .progress").css("width",persent+"%");
+                //     }
+                    })
+
                 }
+            }
 
-                objects = [];
 
-                for ( var i = 0, l = materials.length; i < l; i ++ ) {
 
-                    var cube = new THREE.Mesh( geometry, materials[ i ] );
-
-                    cube.position.x = ( i % 5 ) * 200 - 400;
-                    cube.position.z = Math.floor( i / 5 ) * 200 - 200;
-
-                    objects.push( cube );
-
-                    scene.add( cube );
-
-                }
 
                 var PI2 = Math.PI * 2;
                 var program = function ( context ) {
@@ -188,6 +287,7 @@
                 var intersects = raycaster.intersectObjects( objects );
 
                 if ( intersects.length > 0 ) {
+                    console.log(intersects[0]);
                     transformControl.attach(intersects[ 0 ].object);
                     scene.add(transformControl);
                 }
