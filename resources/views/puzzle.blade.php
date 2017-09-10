@@ -34,6 +34,10 @@
             src="{{ URL::asset('js/MTLLoader.js') }}"></script>
         <script type="text/javascript"
             src="{{ URL::asset('js/OBJLoader.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/DragControls.js') }}"></script>
+        <script type="text/javascript"
+            src="{{ URL::asset('js/TrackBallControls.js') }}"></script>
 
         <script>
             var container, stats;
@@ -50,13 +54,29 @@
                 document.body.appendChild(container);
 
                 camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-                camera.position.set( 0, 100, 100 );
+                camera.position.set( 0, 700, 50 );
 
                 scene = new THREE.Scene();
 
                 raycaster = new THREE.Raycaster();
                 projector = new THREE.Projector();
                 mouse = new THREE.Vector2();
+
+                controls = new THREE.TrackballControls( camera );
+
+                controls.rotateSpeed = 2.0;
+
+                controls.zoomSpeed = 1.2;
+
+                controls.panSpeed = 0.8;
+
+                controls.noZoom = false;
+
+                controls.noPan = false;
+
+                controls.staticMoving = true;
+
+                controls.dynamicDampingFactor = 0.3;
 
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
@@ -174,7 +194,7 @@
                     object.scale.z=1;//缩放级别
                     console.log(object);
                     object.name="haven";//刚体名称
-                    object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
+                    // object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
 
                     object.traverse(function(child) { 
                         if (child instanceof THREE.Mesh) { 
@@ -199,6 +219,20 @@
                 directionalLight.position.normalize();
                 scene.add( directionalLight );
 
+                spotLight = new THREE.SpotLight( 0xffffff, 1 );
+                spotLight.position.set( 15, 40, 35 );
+                spotLight.angle = Math.PI / 4;
+                spotLight.penumbra = 0.05;
+                spotLight.decay = 2;
+                spotLight.distance = 200;
+
+                spotLight.castShadow = true;
+                spotLight.shadow.mapSize.width = 1024;
+                spotLight.shadow.mapSize.height = 1024;
+                spotLight.shadow.camera.near = 10;
+                spotLight.shadow.camera.far = 200;
+                scene.add( spotLight );
+                
                 pointLight = new THREE.PointLight( 0xffffff, 1 );
                 scene.add( pointLight );
 
@@ -208,14 +242,20 @@
                 renderer.setClearColor( 0xf0f0f0 );
                 container.appendChild( renderer.domElement );
 
-                transformControl = new THREE.TransformControls(camera,renderer.domElement);
-                transformControl.addEventListener('change',render);
+                // transformControl = new THREE.TransformControls(camera,renderer.domElement);
+                // transformControl.addEventListener('change',render);
 
-                orbitControl = new THREE.OrbitControls( camera, renderer.domElement );
-                orbitControl.enableDamping = true;
-                orbitControl.dampingFactor = 0.25;
-                orbitControl.enableZoom = true;
-                orbitControl.zoomSpeed = 1;
+                // orbitControl = new THREE.OrbitControls( camera, renderer.domElement );
+                // orbitControl.enableDamping = true;
+                // orbitControl.dampingFactor = 0.25;
+                // orbitControl.enableZoom = true;
+                // orbitControl.zoomSpeed = 1;
+
+                var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
+
+                dragControls.addEventListener( 'dragstart', function ( event ) { controls.enabled = false; } );
+
+                dragControls.addEventListener( 'dragend', function ( event ) { controls.enabled = true; } );
 
                 stats = new Stats();
                 container.appendChild(stats.dom);
@@ -266,13 +306,13 @@
 
                 raycaster.setFromCamera( mouse, camera );
 
-                var intersects = raycaster.intersectObjects( objects );
-                console.log(intersects);
-                if ( intersects.length > 0 ) {
+                // var intersects = raycaster.intersectObjects( objects );
+                // console.log(intersects);
+                // if ( intersects.length > 0 ) {
                     
-                    transformControl.attach(intersects[ 0 ].object);
-                    scene.add(transformControl);
-                }
+                //     transformControl.attach(intersects[ 0 ].object);
+                //     scene.add(transformControl);
+                // }
             }
 
             //
@@ -288,22 +328,23 @@
 
             function render() {
 
-                orbitControl.update();
+                // orbitControl.update();
+                controls.update();
                 renderer.render( scene, camera );
 
             }
 
-            function translate(){
-            transformControl.setMode( "translate" );
-            }
+            // function translate(){
+            // transformControl.setMode( "translate" );
+            // }
 
-            function rotate(){
-                transformControl.setMode( "rotate" );
-            }
+            // function rotate(){
+            //     transformControl.setMode( "rotate" );
+            // }
 
-            function scale(){
-                transformControl.setMode( "scale" );
-            }
+            // function scale(){
+            //     transformControl.setMode( "scale" );
+            // }
         </script>
 
     </body>
