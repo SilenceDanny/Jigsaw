@@ -50,7 +50,7 @@
                 document.body.appendChild(container);
 
                 camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-                camera.position.set( 0, 100, 800 );
+                camera.position.set( 0, 100, 100 );
 
                 scene = new THREE.Scene();
 
@@ -74,9 +74,7 @@
                 // var textureLoader = new THREE.TextureLoader();
 
                 // var imagepath = new Array();
-                // @for($f = 0; $f < count($ImageData); $f++)
-                //     imagepath.push('<?php echo $ImageData[$f];?>');
-                // @endfor
+                
 
                 // var materials = new Array();
                 // for(var i = 0; i < imagepath.length; i++)
@@ -100,7 +98,6 @@
                 //     scene.add( cube );
 
                 // }
-
 
                 function createMtlObj(options){
                 //      options={
@@ -127,6 +124,7 @@
                     objLoader.load( options.objFileName, function ( object ) {
                         if(typeof options.completeCallback=="function"){
                             options.completeCallback(object);
+
                         }
                     }, function ( xhr ) {
                         if ( xhr.lengthComputable ) {
@@ -146,10 +144,10 @@
 
             for(var i = 1; i<=5; i++){
                 for(var j = 1; j<=5; j++){
-                    var mtlPath = "board_" + i + "_" + j + ".mtl";
-                    var objPath = "board_" + i + "_" + j + ".obj";
+                    var mtlPath = "55_" + i + "_" + j + ".mtl";
+                    var objPath = "55_" + i + "_" + j + ".obj";
+
                     createMtlObj({
-                    //     mtlBaseUrl:"objFolder/",
                     mtlPath: "objFolder/",
                     mtlFileName: mtlPath,
                     objPath:"objFolder/",
@@ -161,60 +159,40 @@
                             //                 child.material.emissive.r=0;//设置rgb通道R通道颜色
                             //                 child.material.emissive.g=0.01;//设置rgb通道G通道颜色
                             //                 child.material.emissive.b=0.05;//设置rgb通道B通道颜色
-                            child.material.transparent=true;//材质允许透明
-                            //child.material.opacity=0;//材质默认透明度                        
+                            // child.material.transparent=true;//材质允许透明
+                            //child.material.opacity=0;//材质默认透明度                  
                             child.material.shading=THREE.SmoothShading;//平滑渲染
                         }
                     });
-                    object.emissive=0x00ffff;//自发光颜色
+                    object.emissive=0xffffff;//自发光颜色
                     object.ambient=0x00ffff;//环境光颜色
                     //      object.rotation.x= 0;//x轴方向旋转角度
-                    // object.position.y = 0;//位置坐标X
-                    // object.position.z = 0;//位置坐标y
-                    // object.position.x = i*100;
-                    // object.position.z = j*100;
+                    object.position.x = (Math.random()-0.5)*500;//位置坐标X
+                    object.position.z = (Math.random()-0.5)*500;//位置坐标y
                     object.scale.x=1;//缩放级别
                     object.scale.y=1;//缩放级别
                     object.scale.z=1;//缩放级别
+                    console.log(object);
                     object.name="haven";//刚体名称
                     object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
 
-                     object.traverse(function(child) { 
-                            if (child instanceof THREE.Mesh) { 
-                           objects.push(child);
+                    object.traverse(function(child) { 
+                        if (child instanceof THREE.Mesh) { 
+                            objects.push(child);
                         }
                     });
-
-                    // objects.push(object);
+                    console.log(objects);
                     scene.add(object);//添加到场景中
-
                     }
-                //     progress:function(persent){
-                //          
-                //         $("#havenloading .progress").css("width",persent+"%");
-                //     }
                     })
-
                 }
             }
 
-
-
-
-                var PI2 = Math.PI * 2;
-                var program = function ( context ) {
-
-                    context.beginPath();
-                    context.arc( 0, 0, 0.5, 0, PI2, true );
-                    context.fill();
-
-                };
-
                 // Lights
 
-                scene.add( new THREE.AmbientLight( Math.random() * 0x202020 ) );
+                scene.add( new THREE.AmbientLight( 0xffffff , 1) );
 
-                var directionalLight = new THREE.DirectionalLight( Math.random() * 0xffffff );
+                var directionalLight = new THREE.DirectionalLight( 0xffffff );
                 directionalLight.position.x = Math.random() - 0.5;
                 directionalLight.position.y = Math.random() - 0.5;
                 directionalLight.position.z = Math.random() - 0.5;
@@ -224,11 +202,7 @@
                 pointLight = new THREE.PointLight( 0xffffff, 1 );
                 scene.add( pointLight );
 
-                var sprite = new THREE.Sprite( new THREE.SpriteCanvasMaterial( { color: 0xffffff, program: program } ) );
-                sprite.scale.set( 8, 8, 8 );
-                pointLight.add( sprite );
-
-                renderer = new THREE.CanvasRenderer();
+                renderer = new THREE.WebGLRenderer();
                 renderer.setPixelRatio( window.devicePixelRatio );
                 renderer.setSize( window.innerWidth, window.innerHeight );
                 renderer.setClearColor( 0xf0f0f0 );
@@ -275,11 +249,11 @@
 
             function onDocumentTouchStart( event ) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            event.offsetX = event.touches[0].offsetX;
-            event.offsetY = event.touches[0].offsetY;
-            onDocumentMouseUp( event );
+                event.offsetX = event.touches[0].offsetX;
+                event.offsetY = event.touches[0].offsetY;
+                onDocumentMouseUp( event );
 
             }
 

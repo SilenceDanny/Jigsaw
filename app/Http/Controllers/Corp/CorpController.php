@@ -99,7 +99,7 @@ class CorpController extends Controller
       //
       $realSide = $side*1.5;
 
-      //
+      // //
       $LUCornerX = -0.25*$side;
       $LUCornerY = -0.25*$side;
       $PositionX = 1;//图片对应拼图块位置X
@@ -142,7 +142,10 @@ class CorpController extends Controller
         $LUCornerX += $side;
       }
 
+
+      imagejpeg($src_image,"../public/objFolder/texture/texture.jpg");
       //
       return view('puzzle',compact('ImageData'));
+      // return view('puzzle');
     }
 }
