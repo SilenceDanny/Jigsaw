@@ -90,62 +90,62 @@ class CorpController extends Controller
       可能需要异步
       */
       //获取长宽
-      $sourceX = imagesx($src_image);
-      $sourceY = imagesy($src_image);
+      // $sourceX = imagesx($src_image);
+      // $sourceY = imagesy($src_image);
 
-      //计算拼图块主体边长
-      $side = max_divisor($sourceX, $sourceY);
-
-      //
-      $realSide = $side*1.5;
+      // //计算拼图块主体边长
+      // $side = max_divisor($sourceX, $sourceY);
 
       // //
-      $LUCornerX = -0.25*$side;
-      $LUCornerY = -0.25*$side;
-      $PositionX = 1;//图片对应拼图块位置X
-      $PositionY = 1;//图片对应拼图块位置Y
-      $MaxPositionX = $sourceX/$side;//最大位置X值
-      $MaxPositionY = $sourceY/$side;//最大位置Y值
-      $CorpWidth = $realSide;//裁剪宽度
-      $CorpHeight = $realSide;//裁剪高度
-      $XCount = $sourceX/$side;//x方向拼图数
-      $YCount = $sourceY/$side;//y方向拼图数
-      $ImageData = array();//返回前端的数据集
+      // $realSide = $side*1.5;
 
-      //
-      for($PositionX = 1; $PositionX <= $XCount; $PositionX++)
-      {
-        $LUCornerY = -0.25*$side;
-        for ($PositionY = 1; $PositionY <= $YCount ; $PositionY++) 
-        { 
-          //
-          $dst_image = imagecreatetruecolor($realSide, $realSide);
+      // // //
+      // $LUCornerX = -0.25*$side;
+      // $LUCornerY = -0.25*$side;
+      // $PositionX = 1;//图片对应拼图块位置X
+      // $PositionY = 1;//图片对应拼图块位置Y
+      // $MaxPositionX = $sourceX/$side;//最大位置X值
+      // $MaxPositionY = $sourceY/$side;//最大位置Y值
+      // $CorpWidth = $realSide;//裁剪宽度
+      // $CorpHeight = $realSide;//裁剪高度
+      // $XCount = $sourceX/$side;//x方向拼图数
+      // $YCount = $sourceY/$side;//y方向拼图数
+      // $ImageData = array();//返回前端的数据集
 
-          //
-          imagecopyresampled($dst_image, $src_image, 0, 0, $LUCornerX, $LUCornerY, $realSide, $realSide, $realSide, $realSide);
+      // //
+      // for($PositionX = 1; $PositionX <= $XCount; $PositionX++)
+      // {
+      //   $LUCornerY = -0.25*$side;
+      //   for ($PositionY = 1; $PositionY <= $YCount ; $PositionY++) 
+      //   { 
+      //     //
+      //     $dst_image = imagecreatetruecolor($realSide, $realSide);
 
-          //生成位置编号
-          $PartName = $PositionX."_".$PositionY;
+      //     //
+      //     imagecopyresampled($dst_image, $src_image, 0, 0, $LUCornerX, $LUCornerY, $realSide, $realSide, $realSide, $realSide);
 
-          //输出到指定文件夹
-          // imagepng($dst_image,"../storage/app/".$JigsawName."/".$PartName.".png");
-          imagejpeg($dst_image,"../public/puzzleSource/".$JigsawName."/".$PartName.".jpg");
-          imagejpeg($src_image,"../public/objFolder/texture/texture.jpg");
+      //     //生成位置编号
+      //     $PartName = $PositionX."_".$PositionY;
 
-          //
-          // array_push($ImageData, "/storage/app/".$JigsawName."/".$PartName.".png");
-          array_push($ImageData, "puzzleSource/".$JigsawName."/".$PartName.".jpg");
+      //     //输出到指定文件夹
+      //     // imagepng($dst_image,"../storage/app/".$JigsawName."/".$PartName.".png");
+      //     imagejpeg($dst_image,"../public/puzzleSource/".$JigsawName."/".$PartName.".jpg");
+      //     imagejpeg($src_image,"../public/objFolder/texture/texture.jpg");
 
-          //
-          $LUCornerY += $side;
-        }
-        $LUCornerX += $side;
-      }
+      //     //
+      //     // array_push($ImageData, "/storage/app/".$JigsawName."/".$PartName.".png");
+      //     array_push($ImageData, "puzzleSource/".$JigsawName."/".$PartName.".jpg");
+
+      //     //
+      //     $LUCornerY += $side;
+      //   }
+      //   $LUCornerX += $side;
+      // }
 
 
       imagejpeg($src_image,"../public/objFolder/texture/texture.jpg");
       //
-      return view('puzzle',compact('ImageData'));
-      // return view('puzzle');
+      // return view('puzzle',compact('ImageData'));
+      return view('puzzle');
     }
 }
