@@ -54,7 +54,7 @@
                 document.body.appendChild(container);
 
                 camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-                camera.position.set( 0, 700, 50 );
+                camera.position.set( 0, 900, 0 );
 
                 scene = new THREE.Scene();
 
@@ -81,6 +81,30 @@
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
+
+                var background = new THREE.PlaneGeometry(1920,1000);
+                var textureLoader = new THREE.TextureLoader()
+                var backgroundTexture = textureLoader.load("background.jpg");
+                var backgroundMaterials = new THREE.MeshBasicMaterial({map:backgroundTexture});
+                var plane = new THREE.Mesh(background,backgroundMaterials);
+                plane.position.x = 0;
+                plane.position.y = -100;
+                plane.position.z = 50;
+                plane.rotation.x= -Math.PI/2;
+
+                scene.add(plane);
+
+                var background2 = new THREE.PlaneGeometry(300,300);
+                var textureLoader2 = new THREE.TextureLoader()
+                var backgroundTexture2 = textureLoader2.load("objFolder/texture/texture.jpg");
+                var backgroundMaterials2 = new THREE.MeshBasicMaterial({map:backgroundTexture2});
+                var plane2 = new THREE.Mesh(background2,backgroundMaterials2);
+                plane2.position.x = -600;
+                plane2.position.y = -20;
+                plane2.position.z = 200;
+                plane2.rotation.x= -Math.PI/2;
+                
+                scene.add(plane2);
                 // Grid
 
                 // var gridHelper = new THREE.GridHelper( 1000, 10 );
