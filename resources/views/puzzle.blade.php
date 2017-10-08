@@ -64,11 +64,25 @@
 
                 controls = new THREE.TrackballControls( camera );
 
-                controls.rotateSpeed = 2.0;
+                // controls.rotateSpeed = 2.0;
 
-                controls.zoomSpeed = 1.2;
+                // controls.zoomSpeed = 1.2;
 
-                controls.panSpeed = 0.8;
+                // controls.panSpeed = 0.8;
+
+                // controls.noZoom = false;
+
+                // controls.noPan = false;
+
+                // controls.staticMoving = true;
+
+                // controls.dynamicDampingFactor = 0.3;
+
+                controls.rotateSpeed = 0.0;
+
+                controls.zoomSpeed = 0.0;
+
+                controls.panSpeed = 0.0;
 
                 controls.noZoom = false;
 
@@ -105,6 +119,19 @@
                 plane2.rotation.x= -Math.PI/2;
                 
                 scene.add(plane2);
+
+                var background3 = new THREE.PlaneGeometry(150,150);
+                var textureLoader3 = new THREE.TextureLoader()
+                var backgroundTexture3 = textureLoader3.load("background.jpg");
+                var backgroundMaterials3 = new THREE.MeshBasicMaterial({map:backgroundTexture});
+                var plane3 = new THREE.Mesh(background3,backgroundMaterials3);
+                plane3.position.x = 0;
+                plane3.position.y = -1;
+                plane3.position.z = 0;
+                plane3.rotation.x= -Math.PI/2;
+
+                scene.add(plane3);
+
                 // Grid
 
                 // var gridHelper = new THREE.GridHelper( 1000, 10 );
@@ -211,25 +238,34 @@
                     object.emissive=0xffffff;//自发光颜色
                     object.ambient=0x00ffff;//环境光颜色
                     //      object.rotation.x= 0;//x轴方向旋转角度
-                    object.position.x = (Math.random()-0.5)*500;//位置坐标X
-                    object.position.z = (Math.random()-0.5)*500;//位置坐标y
+                    object.position.x = 0;//位置坐标X
+                    object.position.z = 0;//位置坐标y
                     object.scale.x=1;//缩放级别
                     object.scale.y=1;//缩放级别
                     object.scale.z=1;//缩放级别
-                    console.log(object);
+                    // console.log(object);
                     object.name="haven";//刚体名称
                     // object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
 
                     object.traverse(function(child) { 
                         if (child instanceof THREE.Mesh) { 
+                            child.position.x = (Math.random()-0.5)*500;
+                            child.position.z = (Math.random()-0.5)*500;
                             objects.push(child);
                         }
                     });
-                    console.log(objects);
+                    // console.log(objects);
                     scene.add(object);//添加到场景中
                     }
                     })
                 }
+            }
+
+            for(var i = 0; i<objects.length; i++)
+            {
+                console.log("test");
+                objects[i].position.x = (Math.random()-0.5)*500;
+                objects[i].position.y = (Math.random()-0.5)*500;
             }
 
                 // Lights
@@ -237,14 +273,14 @@
                 scene.add( new THREE.AmbientLight( 0xffffff , 1) );
 
                 var directionalLight = new THREE.DirectionalLight( 0xffffff );
-                directionalLight.position.x = Math.random() - 0.5;
-                directionalLight.position.y = Math.random() - 0.5;
-                directionalLight.position.z = Math.random() - 0.5;
+                directionalLight.position.x = -200;
+                directionalLight.position.y = 300;
+                directionalLight.position.z = -200;
                 directionalLight.position.normalize();
                 scene.add( directionalLight );
 
-                spotLight = new THREE.SpotLight( 0xffffff, 1 );
-                spotLight.position.set( 15, 40, 35 );
+                spotLight = new THREE.SpotLight( 0xffffff, 2 );
+                spotLight.position.set( 150, 400, 350 );
                 spotLight.angle = Math.PI / 4;
                 spotLight.penumbra = 0.05;
                 spotLight.decay = 2;
@@ -277,9 +313,16 @@
 
                 var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
 
-                dragControls.addEventListener( 'dragstart', function ( event ) { controls.enabled = false; } );
+                dragControls.addEventListener( 'dragstart', function ( event )
+                { 
+                    controls.enabled = false; 
 
-                dragControls.addEventListener( 'dragend', function ( event ) { controls.enabled = true; } );
+                } );
+
+                dragControls.addEventListener( 'dragend', function ( event ) 
+                { 
+                    controls.enabled = true;
+                } );
 
                 stats = new Stats();
                 container.appendChild(stats.dom);
@@ -330,13 +373,48 @@
 
                 raycaster.setFromCamera( mouse, camera );
 
-                // var intersects = raycaster.intersectObjects( objects );
-                // console.log(intersects);
-                // if ( intersects.length > 0 ) {
-                    
-                //     transformControl.attach(intersects[ 0 ].object);
-                //     scene.add(transformControl);
-                // }
+
+                var intersects = raycaster.intersectObjects( objects );
+                console.log(intersects);
+                if ( intersects.length > 0 ) {
+                    var target = intersects[ 0 ].object;
+                            
+                    if(target.position.x > -75 && target.position.x < 75 && target.position.z >- 75 && target.position.z < 75)
+                    {
+                        // target.position.x = target.position.x-(target.position.x%30);
+                        // target.position.z = target.position.z-(target.position.z%30);
+
+                        var xMarker = [0,30,30,60,60];
+                        var zMarker = [0,30,30,60,60];
+                        var positionMarkerX;
+                        var positionMarkerZ;
+
+                        if(target.position.x >= 0)
+                        {
+                            positionMarkerX = Math.floor(target.position.x/15);
+                            target.position.x = xMarker[positionMarkerX];
+                        }
+                        else
+                        {
+                            positionMarkerX = Math.floor(target.position.x/15)+1;
+                            target.position.x = -xMarker[-positionMarkerX];
+                        }
+
+                        if(target.position.z >= 0)
+                        {
+                            positionMarkerZ = Math.floor(target.position.z/15);
+                            target.position.z = zMarker[positionMarkerZ];
+                        }
+                        else
+                        {
+                            positionMarkerZ = Math.floor(target.position.z/15)+1;
+                            target.position.z = -zMarker[-positionMarkerZ];
+                        }
+
+                        console.log(positionMarkerX);
+                        console.log(positionMarkerZ);
+                    }
+                }
             }
 
             //
