@@ -96,6 +96,10 @@
                     <br>
                     Upload Photo:<br>
                     <input type="file" name="imageSrc">
+                    <br>
+                    Game Mode:<br>
+                    <input type="checkbox" name="gamemode" value="25">25 pieces</input>
+                    <input type="checkbox" name="gamemode" value="100">100 pieces</input>
                     <br><br>
                     <button type="submit">Submit</button>
                 </form>

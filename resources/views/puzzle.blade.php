@@ -39,6 +39,8 @@
         <script type="text/javascript"
             src="{{ URL::asset('js/TrackBallControls.js') }}"></script>
 
+        <script type="text/javascript"
+            src="{{ URL::asset('js/diylib/DiyTools.js') }}"></script>
         <script>
             var container, stats;
 
@@ -50,11 +52,13 @@
 
             function init() {
 
+                var mode = {{$gamemode}};
+
                 container = document.createElement('div');
                 document.body.appendChild(container);
 
-                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-                camera.position.set( 0, 900, 0 );
+                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
+                camera.position.set( 0, 1000, 0 );
 
                 scene = new THREE.Scene();
 
@@ -64,25 +68,11 @@
 
                 controls = new THREE.TrackballControls( camera );
 
-                // controls.rotateSpeed = 2.0;
+                controls.rotateSpeed = 2.0;
 
-                // controls.zoomSpeed = 1.2;
+                controls.zoomSpeed = 1.2;
 
-                // controls.panSpeed = 0.8;
-
-                // controls.noZoom = false;
-
-                // controls.noPan = false;
-
-                // controls.staticMoving = true;
-
-                // controls.dynamicDampingFactor = 0.3;
-
-                controls.rotateSpeed = 0.0;
-
-                controls.zoomSpeed = 0.0;
-
-                controls.panSpeed = 0.0;
+                controls.panSpeed = 0.8;
 
                 controls.noZoom = false;
 
@@ -92,11 +82,12 @@
 
                 controls.dynamicDampingFactor = 0.3;
 
+
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
 
-                var background = new THREE.PlaneGeometry(1920,1000);
+                var background = new THREE.PlaneGeometry(6000,3000);
                 var textureLoader = new THREE.TextureLoader()
                 var backgroundTexture = textureLoader.load("background.jpg");
                 var backgroundMaterials = new THREE.MeshBasicMaterial({map:backgroundTexture});
@@ -110,66 +101,30 @@
 
                 var background2 = new THREE.PlaneGeometry(300,300);
                 var textureLoader2 = new THREE.TextureLoader()
-                var backgroundTexture2 = textureLoader2.load("objFolder/texture/texture.jpg");
+                var backgroundTexture2 = textureLoader2.load("objFolder/" + mode +"/texture/texture.jpg");
                 var backgroundMaterials2 = new THREE.MeshBasicMaterial({map:backgroundTexture2});
                 var plane2 = new THREE.Mesh(background2,backgroundMaterials2);
-                plane2.position.x = -600;
+                plane2.position.x = -1000;
                 plane2.position.y = -20;
-                plane2.position.z = 200;
+                plane2.position.z = 400;
                 plane2.rotation.x= -Math.PI/2;
                 
                 scene.add(plane2);
 
-                var background3 = new THREE.PlaneGeometry(150,150);
-                var textureLoader3 = new THREE.TextureLoader()
-                var backgroundTexture3 = textureLoader3.load("background.jpg");
-                var backgroundMaterials3 = new THREE.MeshBasicMaterial({map:backgroundTexture});
-                var plane3 = new THREE.Mesh(background3,backgroundMaterials3);
-                plane3.position.x = 0;
-                plane3.position.y = -1;
-                plane3.position.z = 0;
-                plane3.rotation.x= -Math.PI/2;
+                // var background3 = new THREE.PlaneGeometry(300,300);
+                // var textureLoader3 = new THREE.TextureLoader()
+                // var backgroundTexture3 = textureLoader3.load("background.jpg");
+                // var backgroundMaterials3 = new THREE.MeshBasicMaterial({map:backgroundTexture});
+                // var plane3 = new THREE.Mesh(background3,backgroundMaterials3);
+                // plane3.position.x = 0;
+                // plane3.position.y = -1;
+                // plane3.position.z = 0;
+                // plane3.rotation.x= -Math.PI/2;
 
-                scene.add(plane3);
+                // scene.add(plane3);
 
-                // Grid
-
-                // var gridHelper = new THREE.GridHelper( 1000, 10 );
-                // gridHelper.position.y = - 120;
-                // scene.add( gridHelper );
-
-                // cube
-
-                // var geometry = new THREE.BoxGeometry( 100, 20, 100 );
-
-                // var textureLoader = new THREE.TextureLoader();
-
-                // var imagepath = new Array();
-                
-
-                // var materials = new Array();
-                // for(var i = 0; i < imagepath.length; i++)
-                // {
-                //     var tempTexture = textureLoader.load(imagepath[i]);
-                //     materials[i] = new THREE.MeshBasicMaterial( {map:tempTexture} );
-                    
-                // }
-
-                // objects = [];
-
-                // for ( var i = 0, l = materials.length; i < l; i ++ ) {
-
-                //     var cube = new THREE.Mesh( geometry, materials[ i ] );
-
-                //     cube.position.x = ( i % 5 ) * 200 - 400;
-                //     cube.position.z = Math.floor( i / 5 ) * 200 - 200;
-
-                //     objects.push( cube );
-
-                //     scene.add( cube );
-
-                // }
-
+                objects = [];
+               
                 function createMtlObj(options){
                 //      options={
                 //          mtlBaseUrl:"",
@@ -211,55 +166,65 @@
                 });
             }
 
-            objects = [];
+        objects = [];
 
-            for(var i = 1; i<=5; i++){
-                for(var j = 1; j<=5; j++){
-                    var mtlPath = "55_" + i + "_" + j + ".mtl";
-                    var objPath = "55_" + i + "_" + j + ".obj";
+        var xLength, yLength, OBJMTL_Path, prefix;
+        if(mode == 25)
+        {
+            xLength = 5;
+            yLength = 5;
+            OBJMTL_Path = "25";
+            prefix = "55_";
+        }
+        else if(mode == 100)
+        {
+            xLength = 10;
+            yLength = 10;
+            OBJMTL_Path = "100";
+            prefix = "1010_"
+        }
 
-                    createMtlObj({
-                    mtlPath: "objFolder/",
-                    mtlFileName: mtlPath,
-                    objPath:"objFolder/",
-                    objFileName: objPath,
-                    completeCallback:function(object){
-                        object.traverse(function(child) { 
-                            if (child instanceof THREE.Mesh) { 
-                            child.material.side = THREE.DoubleSide;//设置贴图模式为双面贴图
-                            //                 child.material.emissive.r=0;//设置rgb通道R通道颜色
-                            //                 child.material.emissive.g=0.01;//设置rgb通道G通道颜色
-                            //                 child.material.emissive.b=0.05;//设置rgb通道B通道颜色
-                            // child.material.transparent=true;//材质允许透明
-                            //child.material.opacity=0;//材质默认透明度                  
-                            child.material.shading=THREE.SmoothShading;//平滑渲染
-                        }
-                    });
-                    object.emissive=0xffffff;//自发光颜色
-                    object.ambient=0x00ffff;//环境光颜色
-                    //      object.rotation.x= 0;//x轴方向旋转角度
-                    object.position.x = 0;//位置坐标X
-                    object.position.z = 0;//位置坐标y
-                    object.scale.x=1;//缩放级别
-                    object.scale.y=1;//缩放级别
-                    object.scale.z=1;//缩放级别
-                    // console.log(object);
-                    object.name="haven";//刚体名称
-                    // object.rotation.y=-Math.PI;//初始Y轴方向旋转角度
 
+        for(var i = 1; i<=xLength; i++)
+        {
+            for(var j = 1; j<=yLength; j++){
+                var mtlPath = prefix + i + "_" + j + ".mtl";
+                var objPath = prefix + i + "_" + j + ".obj";
+
+                createMtlObj({
+                mtlPath: "objFolder/" + OBJMTL_Path + "/",
+                mtlFileName: mtlPath,
+                objPath:"objFolder/" + OBJMTL_Path + "/",
+                objFileName: objPath,
+                completeCallback:function(object){
                     object.traverse(function(child) { 
                         if (child instanceof THREE.Mesh) { 
-                            child.position.x = (Math.random()-0.5)*500;
-                            child.position.z = (Math.random()-0.5)*500;
-                            objects.push(child);
-                        }
-                    });
-                    // console.log(objects);
-                    scene.add(object);//添加到场景中
+                        child.material.side = THREE.DoubleSide;//设置贴图模式为双面贴图                 
+                        child.material.shading=THREE.SmoothShading;//平滑渲染
                     }
-                    })
+                });
+                object.emissive=0xffffff;//自发光颜色
+                object.ambient=0x00ffff;//环境光颜色
+                //      object.rotation.x= 0;//x轴方向旋转角度
+                object.position.x = 0;//位置坐标X
+                object.position.z = 0;//位置坐标y
+                object.scale.x=1;//缩放级别
+                object.scale.y=1;//缩放级别
+                object.scale.z=1;//缩放级别
+
+                object.traverse(function(child) { 
+                    if (child instanceof THREE.Mesh) { 
+                        child.position.x = (Math.random()-0.5)*1000;
+                        child.position.z = (Math.random()-0.5)*1000;
+                        objects.push(child);
+                    }
+                });
+                // console.log(objects);
+                scene.add(object);//添加到场景中
                 }
+                })
             }
+        }
 
             for(var i = 0; i<objects.length; i++)
             {

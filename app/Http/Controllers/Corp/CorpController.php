@@ -21,6 +21,7 @@ class CorpController extends Controller
     	//获取上传的图片和名称
     	$path = Storage::disk('local')->putFileAs('imageTemp', $request->file('imageSrc'), $imgName.".jpg");
       $JigsawName = $request->get('JigsawName');
+      $gamemode = $request->get('gamemode');
 
       //创建拼图文件夹
       Storage::makeDirectory($JigsawName);
@@ -143,9 +144,9 @@ class CorpController extends Controller
       // }
 
 
-      imagejpeg($src_image,"../public/objFolder/texture/texture.jpg");
+      imagejpeg($src_image,"../public/objFolder/".$gamemode."/texture/texture.jpg");
       //
       // return view('puzzle',compact('ImageData'));
-      return view('puzzle');
+      return view('puzzle')->with('gamemode',$gamemode);
     }
 }
