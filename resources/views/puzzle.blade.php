@@ -87,29 +87,29 @@
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
 
-                var background = new THREE.PlaneGeometry(6000,3000);
-                var textureLoader = new THREE.TextureLoader()
-                var backgroundTexture = textureLoader.load("background.jpg");
-                var backgroundMaterials = new THREE.MeshBasicMaterial({map:backgroundTexture});
-                var plane = new THREE.Mesh(background,backgroundMaterials);
-                plane.position.x = 0;
-                plane.position.y = -100;
-                plane.position.z = 50;
-                plane.rotation.x= -Math.PI/2;
+                // var background = new THREE.PlaneGeometry(2560,1440);
+                // var textureLoader = new THREE.TextureLoader()
+                // var backgroundTexture = textureLoader.load("background.jpg");
+                // var backgroundMaterials = new THREE.MeshBasicMaterial({map:backgroundTexture});
+                // var plane = new THREE.Mesh(background,backgroundMaterials);
+                // plane.position.x = 0;
+                // plane.position.y = -100;
+                // plane.position.z = 50;
+                // plane.rotation.x= -Math.PI/2;
 
-                scene.add(plane);
+                // scene.add(plane);
 
-                var background2 = new THREE.PlaneGeometry(300,300);
-                var textureLoader2 = new THREE.TextureLoader()
-                var backgroundTexture2 = textureLoader2.load("objFolder/" + mode +"/texture/texture.jpg");
-                var backgroundMaterials2 = new THREE.MeshBasicMaterial({map:backgroundTexture2});
-                var plane2 = new THREE.Mesh(background2,backgroundMaterials2);
-                plane2.position.x = -1000;
-                plane2.position.y = -20;
-                plane2.position.z = 400;
-                plane2.rotation.x= -Math.PI/2;
+                // var background2 = new THREE.PlaneGeometry(300,300);
+                // var textureLoader2 = new THREE.TextureLoader()
+                // var backgroundTexture2 = textureLoader2.load("objFolder/" + mode +"/texture/texture.jpg");
+                // var backgroundMaterials2 = new THREE.MeshBasicMaterial({map:backgroundTexture2});
+                // var plane2 = new THREE.Mesh(background2,backgroundMaterials2);
+                // plane2.position.x = -1000;
+                // plane2.position.y = -20;
+                // plane2.position.z = 400;
+                // plane2.rotation.x= -Math.PI/2;
                 
-                scene.add(plane2);
+                // scene.add(plane2);
 
                 // var background3 = new THREE.PlaneGeometry(300,300);
                 // var textureLoader3 = new THREE.TextureLoader()
@@ -214,8 +214,8 @@
 
                 object.traverse(function(child) { 
                     if (child instanceof THREE.Mesh) { 
-                        child.position.x = (Math.random()-0.5)*1000;
-                        child.position.z = (Math.random()-0.5)*1000;
+                        child.position.x = (Math.random()-0.5)*mode*20;
+                        child.position.z = (Math.random()-0.5)*mode*20;
                         objects.push(child);
                     }
                 });
@@ -229,8 +229,8 @@
             for(var i = 0; i<objects.length; i++)
             {
                 console.log("test");
-                objects[i].position.x = (Math.random()-0.5)*500;
-                objects[i].position.y = (Math.random()-0.5)*500;
+                objects[i].position.x = 0;
+                objects[i].position.y = 0;
             }
 
                 // Lights
