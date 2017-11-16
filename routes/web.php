@@ -24,3 +24,11 @@ Route::get('/puzzle', function(){
 Route::get('/testobjmtl',function(){
 	return view('testobjmtl');
 });
+
+Route::get('/collatest', function(){
+	return view('collatest');
+});
+
+Route::get('/index', function(){
+	return view('index');
+});

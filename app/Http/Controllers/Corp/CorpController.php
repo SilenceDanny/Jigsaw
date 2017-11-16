@@ -147,6 +147,7 @@ class CorpController extends Controller
       imagejpeg($src_image,"../public/objFolder/".$gamemode."/texture/texture.jpg");
       //
       // return view('puzzle',compact('ImageData'));
-      return view('puzzle')->with('gamemode',$gamemode);
+      // return view('puzzle')->with('gamemode',$gamemode);
+      return view('collatest')->with('gamemode',$gamemode);
     }
 }
