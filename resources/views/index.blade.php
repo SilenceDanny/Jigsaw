@@ -44,13 +44,6 @@
         ==================== -->
         <div class="container">
             <nav class="navbar navbar-fixed-top  navigation " id="top-nav">
-                <!-- <a class="navbar-brand" href="#">
-                    <img src="images/logo.png">
-                </a> -->
-
-              <!-- <button class="navbar-toggler hidden-lg-up float-lg-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" >
-                  <i class="tf-ion-android-menu"></i>
-              </button> -->
               <div class="collapse navbar-toggleable-md" id="navbarResponsive">
                 <ul class="nav navbar-nav menu float-lg-right" id="top-nav">
                   <li class="nav-item active">
@@ -79,7 +72,8 @@
                             <h1 class="wow fadeInDown" data-wow-delay="0.3s" data-wow-duration=".2s">Play Jigsaw Puzzle With You Friend</h1>
                             <p class="wow fadeInDown" data-wow-delay="0.5s" data-wow-duration=".5s"></p>
                             <div class="wow fadeInDown" data-wow-delay="0.7s" data-wow-duration=".7s">
-                                <a class="btn btn-home" href="#explore" role="button">Get Started</a>
+                                <a class="btn btn-home" href="#explore" role="button">Sign In</a>
+                                <a class="btn btn-register" style="margin-left: 20px;" href="/register" role="button">Register</a>
                                 <!-- 协同拼图入口 -->
                             </div>
                         </div>
@@ -88,6 +82,7 @@
                         <div class="block">
                             <div class="counter text-center">
                                 <ul id="countdown_dashboard">
+                                    {{-- main.js修改时间 --}}
                                     <li>
                                         <div class="dash days_dash">
                                             <div class="digit">0</div>
@@ -216,31 +211,26 @@
                     <div class="col-md-7 col-sm-12 wow fadeInLeft">
                         <div class="content">
                             <div class="sub-heading">
-                                <h3>DIY Your Own Jigsaw Puzzle</h3>
+                            <h3>DIY Your Own Jigsaw Puzzle</h3>
                             </div>
                             <form action="uploadimg" method="POST"  enctype="multipart/form-data">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            Puzzle Name:<br>
-                            <input type="text" name="JigsawName">
-                            <br>
-                            Upload Photo:<br>
+                            <h4>Puzzle Name:</h4>
+                            <div class="input-field">
+                                <input type="text" class="uploadpuzzle" placeholder="Your Jigsaw Name" name="JigsawName">
+                            <br><br>
+                            <h4>Upload Photo:</h4>
                             <input type="file" name="imageSrc">
-                            <br>
-                            Game Mode:<br>
+                            <br><br>
+                            <h4>Game Mode:</h4>
                             <input type="checkbox" name="gamemode" value="25">25 pieces</input>
                             <input type="checkbox" name="gamemode" value="100">100 pieces</input>
                             <br><br>
-                            <button type="submit">Submit</button>
-                </form>                    
+                            <button type="submit" class="btn btn-home">Submit</button>
+                            </form>                    
                         </div>
                     </div>
-                    <div class="col-md-5 col-sm-12 wow fadeInLeft" data-wow-delay="0.3s">
-                        <div class="about-slider">
-                            <img src="images/about/1.jpg" alt="">
-                            <img src="images/about/2.jpg" alt="">
-                            <img src="images/about/3.jpg" alt="">
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </section>
@@ -303,8 +293,6 @@
         <script type="text/javascript"
             src="{{ URL::asset('js/wow.min.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/main.js') }}"></script>
-
-        
+            src="{{ URL::asset('js/main.js') }}"></script> 
     </body>
 </html>

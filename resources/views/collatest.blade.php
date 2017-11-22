@@ -15,32 +15,30 @@
     </head>
     <body>
         <script type="text/javascript"
-            src="{{ URL::asset('js/three.js') }}"></script>
+            src="{{ URL::asset('js/threejs/three.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/renderers/Projector.js') }}"></script>
+            src="{{ URL::asset('js/threejs/Projector.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/renderers/CanvasRenderer.js') }}"></script>
+            src="{{ URL::asset('js/threejs/CanvasRenderer.js') }}"></script>
         <script type="text/javascript"
             src="{{ URL::asset('js/libs/stats.min.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/OrbitControls.js') }}"></script>
+            src="{{ URL::asset('js/threejs/OrbitControls.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/Projector.js') }}"></script>
+            src="{{ URL::asset('js/threejs/Projector.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/TransformControls.js') }}"></script>
+            src="{{ URL::asset('js/threejs/TransformControls.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/DDSLoader.js') }}"></script>
+            src="{{ URL::asset('js/threejs/DDSLoader.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/MTLLoader.js') }}"></script>
+            src="{{ URL::asset('js/threejs/MTLLoader.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/OBJLoader.js') }}"></script>
+            src="{{ URL::asset('js/threejs/OBJLoader.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/DragControls.js') }}"></script>
+            src="{{ URL::asset('js/threejs/DragControls.js') }}"></script>
         <script type="text/javascript"
-            src="{{ URL::asset('js/TrackBallControls.js') }}"></script>
+            src="{{ URL::asset('js/threejs/TrackBallControls.js') }}"></script>
 
-        <script type="text/javascript"
-            src="{{ URL::asset('js/diylib/DiyTools.js') }}"></script>
 
         <script type="text/javascript"
             src="{{ URL::asset('js/jquery.min.js') }}"></script>
