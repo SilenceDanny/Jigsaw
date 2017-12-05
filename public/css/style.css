@@ -468,3 +468,34 @@ footer {
       footer p a:hover {
         color: #fff;
         text-decoration: none; }
+
+.fileinput-button {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  background-color: #259f6c;
+  border-radius: 0px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold; 
+  padding: 10px 40px;
+  margin-top: 30px;
+}
+
+.fileinput-button:hover {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  background-color: #fff;
+  color: #555;
+  border: 1px solid #fff;
+}
+
+.fileinput-button input{
+  position:absolute;
+  right: 0px;
+  top: 0px;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  font-size: 200px;
+}

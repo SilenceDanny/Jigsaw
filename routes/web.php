@@ -12,23 +12,14 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
-Route::post('/uploadimg','Corp\CorpController@Corp');
+Route::post('/uploadimg','Corp\CorpController@Corp')->middleware('auth');
 
 Route::get('/puzzle', function(){
 	return view('puzzle');
 });
+Auth::routes();
 
-Route::get('/testobjmtl',function(){
-	return view('testobjmtl');
-});
-
-Route::get('/collatest', function(){
-	return view('collatest');
-});
-
-Route::get('/index', function(){
-	return view('index');
-});
+Route::get('/home', 'HomeController@index');

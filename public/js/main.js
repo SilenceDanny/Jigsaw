@@ -31,7 +31,7 @@ $(document).ready(function(){
         targetDate: {
             'day':      30,
             'month':    12,
-            'year':     2018,
+            'year':     2017,
             'hour':     23,
             'min':      59,
             'sec':      59,
