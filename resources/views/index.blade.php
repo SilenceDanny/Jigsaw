@@ -47,7 +47,7 @@
               <div class="collapse navbar-toggleable-md" id="navbarResponsive">
                 <ul class="nav navbar-nav menu float-lg-right" id="top-nav">
                   <li class="nav-item active">
-                    <a class="nav-link" href="#">HOME</a>
+                    <a class="nav-link" href="#home">HOME</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#explore">EXPLORE</a>
@@ -58,22 +58,32 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#contact">CONTACT</a>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ route('logout') }}"
+                        onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();">
+                    LOGOUT
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
+                  </li>
                 </ul>
               </div>
             </nav>
-        </div>
-        
+        </div>    
 
-        <section class="hero-area bg-1">
+        <section id="home" class="hero-area bg-1">
             <div class="container">
                 <div class="row">
                     <div class="col-md-7">
                         <div class="block">
-                            <h1 class="wow fadeInDown" data-wow-delay="0.3s" data-wow-duration=".2s">Play Jigsaw Puzzle With You Friend</h1>
+                            <h1 class="wow fadeInDown" data-wow-delay="0.3s" data-wow-duration=".2s">Welcome to Puzzle Collaborate, {{ Auth::user()->name }} !</h1>
+                            <p style="font-size: 18px; margin-left: 20px;">You have two ways to start a Jigsaw Puzzle: DIY your own or play an existing one.</p>
                             <p class="wow fadeInDown" data-wow-delay="0.5s" data-wow-duration=".5s"></p>
                             <div class="wow fadeInDown" data-wow-delay="0.7s" data-wow-duration=".7s">
-                                <a class="btn btn-home" href="/login" role="button">Sign In</a>
-                                <a class="btn btn-register" style="margin-left: 20px;" href="/register" role="button">Register</a>
+                                <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="#diy" role="button">Upload Picture to Start</a><br>
+                                <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="#explore" role="button">Choose a Existing Puzzle</a>
                                 <!-- 协同拼图入口 -->
                             </div>
                         </div>

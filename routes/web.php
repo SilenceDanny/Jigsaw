@@ -12,7 +12,10 @@
 */
 
 Route::get('/', function () {
-    return view('index');
+	if(Auth::check())
+		return view('index');
+	else
+    	return view('indexunlog');
 });
 
 Route::post('/uploadimg','Corp\CorpController@Corp')->middleware('auth');

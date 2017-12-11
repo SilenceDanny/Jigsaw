@@ -127,13 +127,15 @@
             var pointLight;
             var xLength, yLength, OBJMTL_Path, prefix;
 
+            // 模式相关参数：25块或100块
+            var mode = {{$gamemode}};
+            var xMarker;
+            var zMarker;
+
             init();
             animate();
 
             function init() {
-
-                // 模式：25块或100块
-                var mode = {{$gamemode}};
 
                 // 定义场景显示到main div
                 container = document.getElementById('main');
@@ -141,7 +143,7 @@
 
                 // 镜头声明
                 camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
-                camera.position.set( 0, 1000, 20 );//位置(x，y，z)
+                camera.position.set( 0, 800, 20 );//位置(x，y，z)
 
                 // 场景声明
                 scene = new THREE.Scene();
@@ -226,6 +228,8 @@
                 yLength = 5;
                 OBJMTL_Path = "25";
                 prefix = "55_";
+                xMarker = [0,30,30,60,60];
+                zMarker = [0,30,30,60,60];
             }
             else if(mode == 100)
             {
@@ -233,6 +237,8 @@
                 yLength = 10;
                 OBJMTL_Path = "100";
                 prefix = "1010_"
+                xMarker = [15,45,75,105,135];
+                zMarker = [15,45,75,105,135];
             }
 
             // 模型导入
@@ -266,8 +272,8 @@
 
                     object.traverse(function(child) { 
                         if (child instanceof THREE.Mesh) { 
-                            child.position.x = (Math.random()-0.5)*mode*20;//绝对位置坐标X
-                            child.position.z = (Math.random()-0.5)*mode*20;//绝对位置坐标Y
+                            child.position.x = (Math.random()-0.5)*mode*5;//绝对位置坐标X
+                            child.position.z = (Math.random()-0.5)*mode*5;//绝对位置坐标Y
                             objects.push(child);
                         }
                     });
@@ -340,36 +346,64 @@
                 // 网格贴合逻辑
                 if ( intersects.length > 0 ) {
                     var target = intersects[ 0 ].object;
-                            
-                    if(target.position.x > -75 && target.position.x < 75 && target.position.z >- 75 && target.position.z < 75)
+                    if(mode == 25)
                     {
-                        // 设定网格
-                        var xMarker = [0,30,30,60,60];
-                        var zMarker = [0,30,30,60,60];
+                        if(target.position.x > -75 && target.position.x < 75 && target.position.z >- 75 && target.position.z < 75)
+                        {
+                            var positionMarkerX;
+                            var positionMarkerZ;
 
-                        var positionMarkerX;
-                        var positionMarkerZ;
+                            if(target.position.x >= 0)
+                            {
+                                positionMarkerX = Math.floor(target.position.x/15);
+                                target.position.x = xMarker[positionMarkerX];
+                            }
+                            else
+                            {
+                                positionMarkerX = Math.floor(target.position.x/15)+1;
+                                target.position.x = -xMarker[-positionMarkerX];
+                            }
 
-                        if(target.position.x >= 0)
-                        {
-                            positionMarkerX = Math.floor(target.position.x/15);
-                            target.position.x = xMarker[positionMarkerX];
+                            if(target.position.z >= 0)
+                            {
+                                positionMarkerZ = Math.floor(target.position.z/15);
+                                target.position.z = zMarker[positionMarkerZ];
+                            }
+                            else
+                            {
+                                positionMarkerZ = Math.floor(target.position.z/15)+1;
+                                target.position.z = -zMarker[-positionMarkerZ];
+                            }
                         }
-                        else
+                    }        
+                    else if(mode == 100)
+                    {
+                        if(target.position.x > -150 && target.position.x < 150 && target.position.z >- 150 && target.position.z < 150)
                         {
-                            positionMarkerX = Math.floor(target.position.x/15)+1;
-                            target.position.x = -xMarker[-positionMarkerX];
-                        }
+                            var positionMarkerX;
+                            var positionMarkerZ;
 
-                        if(target.position.z >= 0)
-                        {
-                            positionMarkerZ = Math.floor(target.position.z/15);
-                            target.position.z = zMarker[positionMarkerZ];
-                        }
-                        else
-                        {
-                            positionMarkerZ = Math.floor(target.position.z/15)+1;
-                            target.position.z = -zMarker[-positionMarkerZ];
+                            if(target.position.x >= 0)
+                            {
+                                positionMarkerX = Math.floor(target.position.x/30);
+                                target.position.x = xMarker[positionMarkerX];
+                            }
+                            else
+                            {
+                                positionMarkerX = Math.floor(target.position.x/30)+1;
+                                target.position.x = -xMarker[-positionMarkerX];
+                            }
+
+                            if(target.position.z >= 0)
+                            {
+                                positionMarkerZ = Math.floor(target.position.z/30);
+                                target.position.z = zMarker[positionMarkerZ];
+                            }
+                            else
+                            {
+                                positionMarkerZ = Math.floor(target.position.z/30)+1;
+                                target.position.z = -zMarker[-positionMarkerZ];
+                            }
                         }
                     }
                     // 平面位置调整，使贴合能更精准
