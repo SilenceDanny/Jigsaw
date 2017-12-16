@@ -78,7 +78,7 @@
          /*-moz-box-shadow:2px 2px 4px #666666; -webkit-box-shadow:2px 2px 4px #666666;*/
         </style>
         <div id="box" style="position: absolute; margin-left: 300px; margin-bottom: 50px;">
-            <img src="objFolder/reflact.jpg" alt="" id="reflact" width="200" height="200" style="width: 200px; height: 200px;background: #3B3F42">
+            <img src="objFolder/reflact.jpg" alt="" id="reflact" style="width: 300px; height: 300px;background: #3B3F42">
         </div>
         <script type="text/javascript">
             var startreflact = document.getElementById("box");
@@ -92,7 +92,7 @@
             <nav class="navbar navbar-fixed-top  navigation " id="top-nav">
                 <ul class="nav navbar-nav menu float-lg-right" id="top-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">USER:{{ Auth::user()->name }}</a>
+                        <a class="nav-link" href="#">USER: {{ Auth::user()->name }}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('logout') }}"
@@ -115,6 +115,8 @@
                 {{-- 计时器 --}}
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Timer:</div>
                 <div id="dtime" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">00:00:00</div>
+                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Goal:</div>
+                <div id="finishPercentage" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">NaN/NaN</div>
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
@@ -125,12 +127,18 @@
 
             var camera, scene, renderer, objects;
             var pointLight;
-            var xLength, yLength, OBJMTL_Path, prefix;
+            var xLength, yLength, OBJMTL_Path;
 
             // 模式相关参数：25块或100块
             var mode = {{$gamemode}};
             var xMarker;
             var zMarker;
+
+            var check_25 = new Array();
+            var check_100 = new Array();
+
+            var backboard;
+            
 
             init();
             animate();
@@ -227,62 +235,102 @@
                 xLength = 5;
                 yLength = 5;
                 OBJMTL_Path = "25";
-                prefix = "55_";
                 xMarker = [0,30,30,60,60];
                 zMarker = [0,30,30,60,60];
+                check_25[0] = ["001","002","003","004","005","006","007","008","009","010","011","012","013","014","015","016","017","018","019","020","021","022","023","024","025"];
+                check_25[1] = [-60,-60,-60,-60,-60,-30,-30,-30,-30,-30,0,0,0,0,0,30,30,30,30,30,60,60,60,60,60];
+                check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
+                check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+                var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
+                var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
+                backboard = new THREE.Mesh(new THREE.PlaneGeometry(175,175), backboardmaterial);
+                backboard.position.x = 0;
+                backboard.position.z = 0;
+                backboard.position.y = -1;
+                backboard.rotation.x = -Math.PI/2;
+                backboard.side = THREE.DoubleSide;
+                scene.add(backboard);
             }
             else if(mode == 100)
             {
                 xLength = 10;
                 yLength = 10;
                 OBJMTL_Path = "100";
-                prefix = "1010_"
                 xMarker = [15,45,75,105,135];
                 zMarker = [15,45,75,105,135];
+                check_100[0] = ["001","002","003","004","005","006","007","008","009","010","011","012","013","014","015","016","017","018","019","020","021","022","023","024","025","026","027","028","029","030","031","032","033","034","035","036","037","038","039","040","041","042","043","044","045","046","047","048","049","050","051","052","053","054","055","056","057","058","059","060","061","062","063","064","065","066","067","068","069","070","071","072","073","074","075","076","077","078","079","080","081","082","083","084","085","086","087","088","089","090","091","092","093","094","095","096","097","098","099",  "100"];
+                check_100[1] = [-135,-135,-135,-135,-135,-135,-135,-135,-135,-135,
+                                -105,-105,-105,-105,-105,-105,-105,-105,-105,-105,
+                                -75,-75,-75,-75,-75,-75,-75,-75,-75,-75,
+                                -45,-45,-45,-45,-45,-45,-45,-45,-45,-45,
+                                -15,-15,-15,-15,-15,-15,-15,-15,-15,-15,
+                                15,15,15,15,15,15,15,15,15,15,
+                                45,45,45,45,45,45,45,45,45,45,
+                                75,75,75,75,75,75,75,75,75,75,
+                                105,105,105,105,105,105,105,105,105,105,
+                                135,135,135,135,135,135,135,135,135,135];
+                check_100[2] = [-135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,
+                                -135,-105,-75,-45,-15,15,45,75,105,135,];
+                check_100[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
+
+                var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
+                var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
+                backboard = new THREE.Mesh(new THREE.PlaneGeometry(350,350), backboardmaterial);
+                backboard.position.x = 0;
+                backboard.position.z = 0;
+                backboard.position.y = -1;
+                backboard.rotation.x = -Math.PI/2;
+                backboard.side = THREE.DoubleSide;
+                scene.add(backboard);
             }
 
             // 模型导入
-            for(var i = 1; i<=xLength; i++)
-            {
-                for(var j = 1; j<=yLength; j++)
-                {
-                    var mtlPath = prefix + i + "_" + j + ".mtl";
-                    var objPath = prefix + i + "_" + j + ".obj";
-
-                    createMtlObj({
-                    mtlPath: "objFolder/" + OBJMTL_Path + "/",
-                    mtlFileName: mtlPath,
-                    objPath:"objFolder/" + OBJMTL_Path + "/",
-                    objFileName: objPath,
-                    completeCallback:function(object){
-                        object.traverse(function(child) { 
-                            if (child instanceof THREE.Mesh) { 
-                            child.material.side = THREE.DoubleSide;//设置贴图模式为双面贴图                 
-                            child.material.shading=THREE.SmoothShading;//平滑渲染
-                        }
-                    });
-                    object.emissive=0xffffff;//自发光颜色
-                    object.ambient=0x00ffff;//环境光颜色
-                    //      object.rotation.x= 0;//x轴方向旋转角度
-                    object.position.x = 0;//参考位置坐标X
-                    object.position.z = 0;//参考位置坐标y
-                    object.scale.x=1;//缩放级别
-                    object.scale.y=1;//缩放级别
-                    object.scale.z=1;//缩放级别
-
-                    object.traverse(function(child) { 
-                        if (child instanceof THREE.Mesh) { 
-                            child.position.x = (Math.random()-0.5)*mode*5;//绝对位置坐标X
-                            child.position.z = (Math.random()-0.5)*mode*5;//绝对位置坐标Y
-                            objects.push(child);
-                        }
-                    });
-                    console.log(object);
-                    scene.add(object);//添加到场景中
-                    }
-                    })
+            createMtlObj({
+            mtlPath: "objFolder/" + OBJMTL_Path + "/",
+            mtlFileName: OBJMTL_Path + ".mtl",
+            objPath: "objFolder/" + OBJMTL_Path + "/",
+            objFileName: OBJMTL_Path + ".obj",
+            completeCallback:function(object){
+                object.traverse(function(child) { 
+                    if (child instanceof THREE.Mesh) { 
+                    child.material.side = THREE.DoubleSide;//设置贴图模式为双面贴图                 
+                    child.material.shading=THREE.SmoothShading;//平滑渲染
                 }
+            });
+            object.emissive=0xffffff;//自发光颜色
+            object.ambient=0x00ffff;//环境光颜色
+            //      object.rotation.x= 0;//x轴方向旋转角度
+            object.position.x = 0;//参考位置坐标X
+            object.position.z = 0;//参考位置坐标y
+            object.scale.x=1;//缩放级别
+            object.scale.y=1;//缩放级别
+            object.scale.z=1;//缩放级别
+
+            object.traverse(function(child) { 
+                if (child instanceof THREE.Mesh) { 
+                    child.position.x = (Math.random()-0.5)*mode*8;//绝对位置坐标X
+                    child.position.z = (Math.random()-0.5)*mode*8;//绝对位置坐标Y
+                    objects.push(child);
+                    // scene.add(child);
+                }
+            });
+            console.log(object);
+            scene.add(object);//添加到场景中
             }
+            });
 
             // 拖动控制器声明
             var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
@@ -342,7 +390,7 @@
                 raycaster.setFromCamera( mouse, camera );
 
                 var intersects = raycaster.intersectObjects( objects );
-                console.log(intersects);
+                // console.log(intersects);
                 // 网格贴合逻辑
                 if ( intersects.length > 0 ) {
                     var target = intersects[ 0 ].object;
@@ -408,6 +456,65 @@
                     }
                     // 平面位置调整，使贴合能更精准
                     target.position.y = 0;
+                    if(mode == 25)
+                    {
+                        for(var p = 0;p<25;p++)
+                        {
+                            if(target.name.toString() == check_25[0][p])
+                            {
+                                if(target.position.x == check_25[1][p]&&target.position.z == check_25[2][p])
+                                {
+                                    check_25[3][p] = 1;
+                                }
+                                else
+                                {
+                                    check_25[3][p] = 0;
+                                }
+                            }
+                        }
+                        var finish = true;
+                        for(var q = 0;q<25;q++)
+                        {
+                            if(check_25[3][q] == 0)
+                            {
+                                finish = false;
+                            }
+                        }
+                        if(finish == true)
+                        {
+                            alert("you have finished!");
+                        }
+                    }
+
+                    if(mode == 100)
+                    {
+                        for(var p = 0;p<100;p++)
+                        {
+                            if(target.name.toString() == check_100[0][p])
+                            {
+                                if(target.position.x == check_100[1][p]&&target.position.z == check_100[2][p])
+                                {
+                                    check_100[3][p] = 1;
+                                }
+                                else
+                                {
+                                    check_100[3][p] = 0;
+                                }
+                            }
+                        }
+                        var finish = true;
+                        for(var q = 0;q<100;q++)
+                        {
+                            if(check_100[3][q] == 0)
+                            {
+                                finish = false;
+                            }
+                        }
+                        if(finish == true)
+                        {
+                            alert("you have finished!");
+                        }
+                    }
                 }
             }
 
@@ -415,7 +522,6 @@
             function animate() {
 
                 requestAnimationFrame( animate );
-
                 render();
 
             }
@@ -452,8 +558,26 @@
                 str+=":";
                 str+=ss<10?"0"+ss:ss;
                 document.getElementById("dtime").innerHTML = str;
+                if(mode == 25)
+                {
+                    document.getElementById("finishPercentage").innerHTML = check_25[3].sum() + "/" + mode;
+                }
+                else if(mode == 100)
+                {
+                    document.getElementById("finishPercentage").innerHTML = check_100[3].sum() + "/" + mode;
+                }
             },1000);
         };
+        // console.log(objects);
+        </script>
+        <script type="text/javascript">
+            Array.prototype.sum = function (){
+             var result = 0;
+             for(var i = 0; i < this.length; i++) {
+              result += this[i];
+             }
+             return result;
+            };
         </script>
 
 
