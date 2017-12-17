@@ -115,8 +115,9 @@
                 {{-- 计时器 --}}
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Timer:</div>
                 <div id="dtime" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">00:00:00</div>
-                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Goal:</div>
+                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Progress:</div>
                 <div id="finishPercentage" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">NaN/NaN</div>
+                <button id="check" onclick="checkSubmit()">Submit</button>
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
@@ -136,6 +137,8 @@
 
             var check_25 = new Array();
             var check_100 = new Array();
+            var isFinished = 0;
+
 
             var backboard;
             
@@ -241,6 +244,7 @@
                 check_25[1] = [-60,-60,-60,-60,-60,-30,-30,-30,-30,-30,0,0,0,0,0,30,30,30,30,30,60,60,60,60,60];
                 check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
                 check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+                check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
                 var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
                 var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
@@ -281,6 +285,11 @@
                                 -135,-105,-75,-45,-15,15,45,75,105,135,
                                 -135,-105,-75,-45,-15,15,45,75,105,135,];
                 check_100[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
+                check_100[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -396,10 +405,20 @@
                     var target = intersects[ 0 ].object;
                     if(mode == 25)
                     {
+                        var marker;
+                        for(marker = 0; marker<25; marker++)
+                        {
+                            if(target.name.toString() == check_25[0][marker])
+                            {
+                                break;
+                            }
+                        }
                         if(target.position.x > -75 && target.position.x < 75 && target.position.z >- 75 && target.position.z < 75)
                         {
                             var positionMarkerX;
                             var positionMarkerZ;
+
+                            check_25[4][marker] = 1;
 
                             if(target.position.x >= 0)
                             {
@@ -423,13 +442,27 @@
                                 target.position.z = -zMarker[-positionMarkerZ];
                             }
                         }
+                        else
+                        {
+                            check_25[4][marker] = 0;
+                        }
                     }        
                     else if(mode == 100)
                     {
+                        var marker;
+                        for(marker = 0; marker<100; marker++)
+                        {
+                            if(target.name.toString() == check_100[0][marker])
+                            {
+                                break;
+                            }
+                        }
                         if(target.position.x > -150 && target.position.x < 150 && target.position.z >- 150 && target.position.z < 150)
                         {
                             var positionMarkerX;
                             var positionMarkerZ;
+
+                            check_100[4][marker] = 1;
 
                             if(target.position.x >= 0)
                             {
@@ -453,6 +486,10 @@
                                 target.position.z = -zMarker[-positionMarkerZ];
                             }
                         }
+                        else
+                        {
+                            check_100[4][marker] = 0;
+                        }
                     }
                     // 平面位置调整，使贴合能更精准
                     target.position.y = 0;
@@ -472,18 +509,18 @@
                                 }
                             }
                         }
-                        var finish = true;
-                        for(var q = 0;q<25;q++)
-                        {
-                            if(check_25[3][q] == 0)
-                            {
-                                finish = false;
-                            }
-                        }
-                        if(finish == true)
-                        {
-                            alert("you have finished!");
-                        }
+                        // var finish = true;
+                        // for(var q = 0;q<25;q++)
+                        // {
+                        //     if(check_25[3][q] == 0)
+                        //     {
+                        //         finish = false;
+                        //     }
+                        // }
+                        // if(finish == true)
+                        // {
+                        //     alert("you have finished!");
+                        // }
                     }
 
                     if(mode == 100)
@@ -502,18 +539,18 @@
                                 }
                             }
                         }
-                        var finish = true;
-                        for(var q = 0;q<100;q++)
-                        {
-                            if(check_100[3][q] == 0)
-                            {
-                                finish = false;
-                            }
-                        }
-                        if(finish == true)
-                        {
-                            alert("you have finished!");
-                        }
+                        // var finish = true;
+                        // for(var q = 0;q<100;q++)
+                        // {
+                        //     if(check_100[3][q] == 0)
+                        //     {
+                        //         finish = false;
+                        //     }
+                        // }
+                        // if(finish == true)
+                        // {
+                        //     alert("you have finished!");
+                        // }
                     }
                 }
             }
@@ -542,29 +579,32 @@
             var ss = 0;
             var str = '';
             var timer = setInterval(function(){
-                str = "";
-                if(++ss==60)
+                if(isFinished == 0)
                 {
-                    if(++mm==60)
+                    str = "";
+                    if(++ss==60)
                     {
-                        HH++;
-                        mm=0;
-                    }
-                    ss=0;
-                }    
-                str+=HH<10?"0"+HH:HH;
-                str+=":";
-                str+=mm<10?"0"+mm:mm;
-                str+=":";
-                str+=ss<10?"0"+ss:ss;
+                        if(++mm==60)
+                        {
+                            HH++;
+                            mm=0;
+                        }
+                        ss=0;
+                    }    
+                    str+=HH<10?"0"+HH:HH;
+                    str+=":";
+                    str+=mm<10?"0"+mm:mm;
+                    str+=":";
+                    str+=ss<10?"0"+ss:ss;
+                }
                 document.getElementById("dtime").innerHTML = str;
                 if(mode == 25)
                 {
-                    document.getElementById("finishPercentage").innerHTML = check_25[3].sum() + "/" + mode;
+                    document.getElementById("finishPercentage").innerHTML = check_25[4].sum() + "/" + mode;
                 }
                 else if(mode == 100)
                 {
-                    document.getElementById("finishPercentage").innerHTML = check_100[3].sum() + "/" + mode;
+                    document.getElementById("finishPercentage").innerHTML = check_100[4].sum() + "/" + mode;
                 }
             },1000);
         };
@@ -580,6 +620,20 @@
             };
         </script>
 
+        <script type="text/javascript">
+            var checkSubmit = function()
+            {
+                if(check_25[3].sum() == mode)
+                {
+                    isFinished = 1;
+                    alert("Success");
+                }
+                else
+                {
+                    alert("failed");
+                }
+            }
+        </script>
 
     </body>
 </html>
