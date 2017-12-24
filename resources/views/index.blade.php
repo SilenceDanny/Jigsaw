@@ -27,13 +27,10 @@
         <link rel="stylesheet" href="css/style.css">
         <!-- Responsive Stylesheet -->
         <link rel="stylesheet" href="css/responsive.css">
-         <?php
-            use App\archive;
-            $archives =App\archive::all();
-             
-                foreach ($archives as $archive){
-                echo $archive -> archive_id;
-            }
+        <?php
+            use App\Puzzle;
+            $puzzles =App\Puzzle::all();
+            $puzzleCnt = count($puzzles);
         ?>
 
     </head>
@@ -150,12 +147,30 @@
                     <div class="heading wow fadeInUp">
                         <h2>Recommended Chanllege</h2>
                     </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft">
-                        <div class="block">
-                            <img src= {{$archive->archive_path}} style="width: 100px; height: 100px" alt="">
-                            <h3>{{$archive->archive_id or 'Default'}}</h3>
-                        </div>
-                    </div>
+                    
+                        @for ($i = 0; $i < 8; $i++)
+                            <?php
+                                $puzzle_choosen = rand(0,$puzzleCnt-1);
+                            ?>
+                            <div class="col-sm-6 col-md-3 wow fadeInLeft">
+                                <div class="block">
+                                    {{-- <a onclick="javascript:document.from.submit();">
+                                        <img src= {{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                                    </a> --}}
+                                    <form name="playExists" action="playExists" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="Name" value={{$puzzles[$puzzle_choosen]->puzzle_name}}>
+                                        <input type="hidden" name="ID" value={{$puzzles[$puzzle_choosen]->puzzle_id}}>
+                                        <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
+                                        <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
+                                        <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                                    </form>
+                                    <h2>Name:{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h2>
+                                    <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
+                                    
+                                </div>
+                            </div>
+                        @endfor                
                 </div>
             </div>
         </section>

@@ -48,9 +48,16 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'public' => [
+        'puzzleSource' => [
             'driver' => 'local',
             'root' => public_path('puzzleSource'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => public_path('/'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],

@@ -5,15 +5,15 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 // use Illuminate\Foundation\Auth\Archive as Authenticatable;
 
-class archive extends Model
+class Puzzle extends Model
 {
 	/**
      * 关联到模型的数据表
      *
      * @var string
      */
-	protected $table = 'archives';
+	protected $table = 'puzzles';
 	Protected $fillable = [
-			'archive_id', 'puzzle_id', 'owner', 'archive_path',
+			'puzzle_id', 'owner_id','owner_name', 'puzzle_name', 'path', 'mode',
 	];
 }

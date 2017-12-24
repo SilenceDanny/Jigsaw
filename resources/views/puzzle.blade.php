@@ -117,6 +117,8 @@
                 <div id="dtime" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">00:00:00</div>
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Progress:</div>
                 <div id="finishPercentage" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">NaN/NaN</div>
+                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Penalty:</div>
+                <div id="penaltyTime" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">00:00:00</div>
                 <button id="check" onclick="checkSubmit()">Submit</button>
             </div>
         {{-- 拼图场景 --}}
@@ -138,6 +140,10 @@
             var check_25 = new Array();
             var check_100 = new Array();
             var isFinished = 0;
+            var penalty = "";
+            var penaltyHH = 0;
+            var penaltyMM = 0;
+            var penaltySS = 0;
 
 
             var backboard;
@@ -623,15 +629,59 @@
         <script type="text/javascript">
             var checkSubmit = function()
             {
-                if(check_25[3].sum() == mode)
+                switch(mode)
                 {
-                    isFinished = 1;
-                    alert("Success");
-                }
-                else
+                    case 25:
+                    if(check_25[3].sum() == mode)
+                    {
+                        isFinished = 1;
+                        alert("Success");
+                    }
+                    else
+                    {
+                        penaltyCount();
+                        alert("failed");
+                        document.getElementById("penaltyTime").innerHTML = penalty;
+                    }
+                    break;
+                    case 100:
+                    if(check_100[3].sum() == mode)
+                    {
+                        isFinished = 1;
+                        alert("Success");
+                    }
+                    else
+                    {
+                        penaltyCount();
+                        alert("failed");
+                        document.getElementById("penaltyTime").innerHTML = penalty;
+                    }
+                    break;
+                }   
+                
+            }
+        </script>
+
+        <script type="text/javascript">
+            var penaltyCount = function()
+            {
+                penalty = "";
+                penaltySS+=30;
+                if(penaltySS>=60)
                 {
-                    alert("failed");
+                    penaltyMM++;
+                    if(penaltyMM==60)
+                    {
+                        penaltyHH++;
+                        penaltyMM=0;
+                    }
+                    penaltySS = penaltySS-60;
                 }
+                penalty+=penaltyHH<10?"0"+penaltyHH:penaltyHH;
+                penalty+=":";
+                penalty+=penaltyMM<10?"0"+penaltyMM:penaltyMM;
+                penalty+=":";
+                penalty+=penaltySS<10?"0"+penaltySS:penaltySS;
             }
         </script>
 

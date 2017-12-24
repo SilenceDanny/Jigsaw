@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Route::post('/uploadimg','Corp\CorpController@Corp')->middleware('auth');
 
+Route::post('/playExists','PlayExistsController@Play')->middleware('auth');
+
 Route::get('/puzzle', function(){
 	return view('puzzle');
 });
