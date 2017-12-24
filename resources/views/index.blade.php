@@ -27,6 +27,15 @@
         <link rel="stylesheet" href="css/style.css">
         <!-- Responsive Stylesheet -->
         <link rel="stylesheet" href="css/responsive.css">
+         <?php
+            use App\archive;
+            $archives =App\archive::all();
+             
+                foreach ($archives as $archive){
+                echo $archive -> archive_id;
+            }
+        ?>
+
     </head>
 
     <body id="body">
@@ -131,89 +140,26 @@
             </div><!-- .container close -->
         </section><!-- header close -->
 
+        <!--puzzle模块-->
+   
+
         <section id="explore" class="service section">
             <div class="container">
+
                 <div class="row">
                     <div class="heading wow fadeInUp">
-                        <h2>Recommended Challenge</h2>
-                        <!-- <p></p> -->
+                        <h2>Recommended Chanllege</h2>
                     </div>
                     <div class="col-sm-6 col-md-3 wow fadeInLeft">
                         <div class="block">
-                            <!-- <i class="tf-strategy"></i>    -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-1</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft" data-wow-delay="0.3s">
-                        <div class="block">
-                            <!-- <i class="tf-circle-compass"></i> -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-2</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft" data-wow-delay="0.6s">
-                        <div class="block">
-                            <!-- <i class="tf-anchor2"></i> -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-3</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft" data-wow-delay="0.9s">
-                        <div class="block">
-                            <!-- <i class="tf-globe"></i> -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-4</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft">
-                        <div class="block">
-                            <!-- <i class="tf-strategy"></i>    -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-5</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft" data-wow-delay="0.3s">
-                        <div class="block">
-                            <!-- <i class="tf-circle-compass"></i> -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-6</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft" data-wow-delay="0.6s">
-                        <div class="block">
-                            <!-- <i class="tf-anchor2"></i> -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-7</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 wow fadeInLeft" data-wow-delay="0.9s">
-                        <div class="block">
-                            <!-- <i class="tf-globe"></i> -->
-                            <img src="images/about/1.jpg" style="width: 100px;height: 100px" alt="">
-                            <h3>Puzzle-8</h3>
-                            <p>Date: 2017-11-11</p>
-                            <p>Level: 100 Block</p>
+                            <img src= {{$archive->archive_path}} style="width: 100px; height: 100px" alt="">
+                            <h3>{{$archive->archive_id or 'Default'}}</h3>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- .container close-->
         </section>
+
 
         <section class="section about bg-gray" id="diy">
             <div class="container">
