@@ -22,6 +22,8 @@ Route::post('/uploadimg','Corp\CorpController@Corp')->middleware('auth');
 
 Route::post('/playExists','PlayExistsController@Play')->middleware('auth');
 
+Route::post('/saveRank','SaveRankController@SaveRank')->middleware('auth');
+
 Route::get('/puzzle', function(){
 	return view('puzzle');
 });

@@ -48,11 +48,15 @@ class CorpController extends Controller
       $puzzle->owner_name = Auth::user()->name;
       $puzzle->puzzle_name = $JigsawName;
       $puzzle->path = "/puzzleSource/".$JigsawName."/".$JigsawName.".jpg";
-      $puzzle->mode = $mode;
+      $puzzle->mode = $gamemode;
       $puzzle->save();
+
+      $tempPuzzle = Puzzle::where('puzzle_name',$JigsawName)->get();
+      $puzzle_id = $tempPuzzle[0]->puzzle_id;
       //
       // return view('puzzle',compact('ImageData'));
-      return view('puzzle')->with('gamemode',$gamemode);
+      return view('puzzle')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
+      // return view('puzzle',['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
       // return view('collatest')->with('gamemode',$gamemode);
     }
 }

@@ -12,6 +12,10 @@
                 overflow: hidden;
             }
         </style>
+        <?php
+            use App\PuzzleRank;
+            // use App\Auth;
+        ?>
     </head>
     <body>
 
@@ -66,9 +70,6 @@
             src="{{ URL::asset('http://www.zhangxinxu.com/study/js/zxx.drag.1.0.js') }}"></script>
             {{-- 缩略图拖动插件 --}}
 
-        
-
-
 
 
 
@@ -85,7 +86,6 @@
             var endreflact = document.getElementById("reflact");
             startDrag(endreflact, startreflact);
         </script>
-
 
         {{-- 顶端导航栏 --}}
         <div class="container">
@@ -114,12 +114,63 @@
             <div id="sidebar" style="float: left;width: 200px;height: 1024px;background: #D7DADB;box-shadow: #573544">
                 {{-- 计时器 --}}
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Timer:</div>
-                <div id="dtime" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">00:00:00</div>
+                <div id="dtime" style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">00:00:00</div>
+
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Progress:</div>
-                <div id="finishPercentage" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">NaN/NaN</div>
+                <div id="finishPercentage" style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">NaN/NaN</div>
+
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Penalty:</div>
-                <div id="penaltyTime" style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">00:00:00</div>
+                <div id="penaltyTime" style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">00:00:00</div>
+
+                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Rank:</div>
+                <?php
+                    $rankList =PuzzleRank::where('puzzle_id',$puzzle_id)
+                                            ->orderby('time','asc')
+                                            ->take(5)
+                                            ->get();
+                    
+                    $rank[0]="1st";
+                    $rank[1]="2nd";
+                    $rank[2]="3rd";
+                    $rank[3]="4th";
+                    $rank[4]="5th";
+                ?>
+                @if(count($rankList)==0)
+                    <div style="font-size:20px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">NO RECORD !</div>
+                @endif
+                @for ($i = 0; $i < count($rankList); $i++)
+                    <?php
+                        $rankHour = 0;
+                        $rankMinute = 0;
+                        $rankSecond = 0;
+                        $rankTime = "";
+
+                        $tempTime = $rankList[$i]->time;
+                        $rankHour = floor($tempTime/3600);
+                        $rankMinute = floor(($tempTime%3600)/60);
+                        $rankSecond = floor($tempTime%60);
+                        $rankTime = $rankTime.($rankHour<10?"0".$rankHour:$rankHour);
+                        $rankTime = $rankTime.":";
+                        $rankTime = $rankTime.($rankMinute<10?"0".$rankMinute:$rankMinute);
+                        $rankTime = $rankTime.":";
+                        $rankTime = $rankTime.($rankSecond<10?"0".$rankSecond:$rankSecond);
+                    ?>
+                    <div style="font-size:25px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">{{$rank[$i]}}:{{$rankList[$i]->player_name}}</div>
+                    <div style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">{{$rankTime}}</div>
+                @endfor
+
+
                 <button id="check" onclick="checkSubmit()">Submit</button>
+
+                {{-- <form name="rank" action="saveRank" method="POST" enctype="multipart/form-data"> --}}
+                <form name="rank" action="saveRank" method="POST" enctype="multipart/form-data" onsubmit="return saveReport();">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input id="Puzzle_id" type="hidden" name="Puzzle_id" value="">
+                    <input id="Player_id" type="hidden" name="Player_id" value="">
+                    <input id="Player_name" type="hidden" name="Player_name" value="">
+                    <input id="Time" type="hidden" name="Time" value="">
+                    <button id="rankSubmit" type="submit" disabled="true">Exit Game</button>
+                </form>
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
@@ -144,6 +195,10 @@
             var penaltyHH = 0;
             var penaltyMM = 0;
             var penaltySS = 0;
+            var gameTime = "";
+            var HH = 0;
+            var mm = 0;
+            var ss = 0;
 
 
             var backboard;
@@ -160,7 +215,7 @@
 
                 // 镜头声明
                 camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
-                camera.position.set( 0, 800, 20 );//位置(x，y，z)
+                camera.position.set( 0, 800, 50 );//位置(x，y，z)
 
                 // 场景声明
                 scene = new THREE.Scene();
@@ -336,7 +391,7 @@
 
             object.traverse(function(child) { 
                 if (child instanceof THREE.Mesh) { 
-                    child.position.x = (Math.random()-0.5)*mode*8;//绝对位置坐标X
+                    child.position.x = (Math.random())*mode*15 + mode*5;//绝对位置坐标X
                     child.position.z = (Math.random()-0.5)*mode*8;//绝对位置坐标Y
                     objects.push(child);
                     // scene.add(child);
@@ -515,18 +570,6 @@
                                 }
                             }
                         }
-                        // var finish = true;
-                        // for(var q = 0;q<25;q++)
-                        // {
-                        //     if(check_25[3][q] == 0)
-                        //     {
-                        //         finish = false;
-                        //     }
-                        // }
-                        // if(finish == true)
-                        // {
-                        //     alert("you have finished!");
-                        // }
                     }
 
                     if(mode == 100)
@@ -545,18 +588,6 @@
                                 }
                             }
                         }
-                        // var finish = true;
-                        // for(var q = 0;q<100;q++)
-                        // {
-                        //     if(check_100[3][q] == 0)
-                        //     {
-                        //         finish = false;
-                        //     }
-                        // }
-                        // if(finish == true)
-                        // {
-                        //     alert("you have finished!");
-                        // }
                     }
                 }
             }
@@ -577,17 +608,20 @@
 
         </script>
 
+
+
+
         {{-- 计时器 --}}
         <script>
         window.onload = function(){
-            var HH = 0;
-            var mm = 0;
-            var ss = 0;
-            var str = '';
+            HH = 0;
+            mm = 0;
+            ss = 0;
+            gameTime = '';
             var timer = setInterval(function(){
                 if(isFinished == 0)
                 {
-                    str = "";
+                    gameTime = "";
                     if(++ss==60)
                     {
                         if(++mm==60)
@@ -597,13 +631,13 @@
                         }
                         ss=0;
                     }    
-                    str+=HH<10?"0"+HH:HH;
-                    str+=":";
-                    str+=mm<10?"0"+mm:mm;
-                    str+=":";
-                    str+=ss<10?"0"+ss:ss;
+                    gameTime+=HH<10?"0"+HH:HH;
+                    gameTime+=":";
+                    gameTime+=mm<10?"0"+mm:mm;
+                    gameTime+=":";
+                    gameTime+=ss<10?"0"+ss:ss;
                 }
-                document.getElementById("dtime").innerHTML = str;
+                document.getElementById("dtime").innerHTML = gameTime;
                 if(mode == 25)
                 {
                     document.getElementById("finishPercentage").innerHTML = check_25[4].sum() + "/" + mode;
@@ -614,8 +648,11 @@
                 }
             },1000);
         };
-        // console.log(objects);
         </script>
+
+
+
+
         <script type="text/javascript">
             Array.prototype.sum = function (){
              var result = 0;
@@ -636,6 +673,20 @@
                     {
                         isFinished = 1;
                         alert("Success");
+
+
+                        document.getElementById("rankSubmit").disabled = false;
+
+                        var totaltime = HH*3600+mm*60+ss+penaltyHH*3600+penaltyMM*60+penaltySS;
+
+                        var tmp_puzzle_id = <?php echo $puzzle_id;?>;
+                        var tmp_player_id = <?php echo Auth::user()->id;?>;
+                        var tmp_player_name = "<?php echo Auth::user()->name;?>";
+                        document.getElementById("Puzzle_id").value = tmp_puzzle_id;
+                        document.getElementById("Player_id").value = tmp_player_id;
+                        document.getElementById("Player_name").value = tmp_player_name;
+                        document.getElementById("Time").value = totaltime;
+
                     }
                     else
                     {
@@ -644,11 +695,24 @@
                         document.getElementById("penaltyTime").innerHTML = penalty;
                     }
                     break;
+
                     case 100:
                     if(check_100[3].sum() == mode)
                     {
                         isFinished = 1;
                         alert("Success");
+
+                        document.getElementById("rankSubmit").disabled = false;
+
+                        var totaltime = HH*3600+mm*60+ss+penaltyHH*3600+penaltyMM*60+penaltySS;
+
+                        var tmp_puzzle_id = <?php echo $puzzle_id;?>;
+                        var tmp_player_id = <?php echo Auth::user()->id;?>;
+                        var tmp_player_name = "<?php echo Auth::user()->name;?>";
+                        document.getElementById("Puzzle_id").value = tmp_puzzle_id;
+                        document.getElementById("Player_id").value = tmp_player_id;
+                        document.getElementById("Player_name").value = tmp_player_name;
+                        document.getElementById("Time").value = totaltime;
                     }
                     else
                     {
@@ -661,6 +725,10 @@
                 
             }
         </script>
+
+
+
+
 
         <script type="text/javascript">
             var penaltyCount = function()
@@ -684,6 +752,5 @@
                 penalty+=penaltySS<10?"0"+penaltySS:penaltySS;
             }
         </script>
-
     </body>
 </html>
