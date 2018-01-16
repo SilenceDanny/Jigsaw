@@ -175,6 +175,41 @@
             </div>
         </section>
 
+        <section id="explore" class="service section">
+            <div class="container">
+
+                <div class="row">
+                    <div class="heading wow fadeInUp">
+                        <h2>Colla Chanllege</h2>
+                    </div>
+                    
+                        @for ($i = 0; $i < 8; $i++)
+                            <?php
+                                $puzzle_choosen = rand(0,$puzzleCnt-1);
+                            ?>
+                            <div class="col-sm-6 col-md-3 wow fadeInLeft">
+                                <div class="block">
+                                    {{-- <a onclick="javascript:document.from.submit();">
+                                        <img src= {{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                                    </a> --}}
+                                    <form name="playColla" action="playColla" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="Name" value={{$puzzles[$puzzle_choosen]->puzzle_name}}>
+                                        <input type="hidden" name="ID" value={{$puzzles[$puzzle_choosen]->puzzle_id}}>
+                                        <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
+                                        <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
+                                        <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                                    </form>
+                                    <h2>Name:{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h2>
+                                    <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
+                                    
+                                </div>
+                            </div>
+                        @endfor                
+                </div>
+            </div>
+        </section>
+
 
         <section class="section about bg-gray" id="diy">
             <div class="container">

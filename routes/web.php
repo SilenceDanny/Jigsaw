@@ -27,6 +27,9 @@ Route::post('/saveRank','SaveRankController@SaveRank')->middleware('auth');
 Route::get('/puzzle', function(){
 	return view('puzzle');
 });
+
+Route::post('/playColla','CollaController@Play')->middleware('auth');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
