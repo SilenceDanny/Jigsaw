@@ -182,10 +182,9 @@
                     <div class="heading wow fadeInUp">
                         <h2>Colla Chanllege</h2>
                     </div>
-                    
-                        @for ($i = 0; $i < 8; $i++)
+                
                             <?php
-                                $puzzle_choosen = rand(0,$puzzleCnt-1);
+                                $puzzle_choosen = 6;
                             ?>
                             <div class="col-sm-6 col-md-3 wow fadeInLeft">
                                 <div class="block">
@@ -204,8 +203,7 @@
                                     <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
                                     
                                 </div>
-                            </div>
-                        @endfor                
+                            </div>                
                 </div>
             </div>
         </section>
