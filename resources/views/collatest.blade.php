@@ -188,6 +188,7 @@
 
             // 模式相关参数：25块或100块
             var mode = {{$gamemode}};
+            var gameName = "{{$gameName}}";
             var xMarker;
             var zMarker;
 
@@ -212,7 +213,7 @@
 
             //协同数据
             var collaData = [];
-            var ws = new WebSocket("ws://localhost:8181");
+            var ws = new WebSocket("ws://10.17.209.20:8181");
             ws.onopen = function (e) {
                 console.log('Connection to server opened');
             }
@@ -225,7 +226,7 @@
                 }
                 else if(requestData[0] == 'I')
                 {
-                    requestMove(requestData[1]);
+                    requestMove(requestData[2]);
                 }
             }
             
@@ -636,7 +637,7 @@
                 console.log(object);
                 console.log(collaData.toString());
 
-                ws.send("C#"+collaData.toString());
+                ws.send("C#"+gameName+"#"+collaData.toString());
                 scene.add(object);//添加到场景中
                 }
                 });
@@ -644,7 +645,7 @@
 
              //加入协同
             function joinCollaGame(){
-                ws.send("J#");
+                ws.send("J#"+gameName+"#");
             }
 
             function joinCollaInit(data){
@@ -772,13 +773,13 @@
             }
 
             function moveBlockColla(info){
-                ws.send("I#"+info);
+                ws.send("I#"+gameName+"#"+info);
             }
 
             function requestMove(data)
             {
                 var tempData = data.split(";")
-                console.log(tempData);
+                console.log(data);
                 for(var i=0;i<objects.length;i++)
                 {
                     objects[i].traverse(function(child) { 

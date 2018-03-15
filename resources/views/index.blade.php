@@ -198,6 +198,7 @@
                                         <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
                                         <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
                                         <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                                        <input type="test" name="gameName">
                                     </form>
                                     <h2>Name:{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h2>
                                     <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
