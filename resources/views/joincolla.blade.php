@@ -172,8 +172,6 @@
                     <button id="rankSubmit" type="submit" disabled="true">Exit Game</button>
                 </form>
 
-                <button id="createColla" onclick="createCollaGame()">Create Colla.Game</button>
-                <button id="joinColla" onclick="joinCollaGame()">Join Colla.Game</button>
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
@@ -189,6 +187,7 @@
             // 模式相关参数：25块或100块
             var mode = {{$gamemode}};
             var gameName = "{{$gameName}}";
+            var puzzle_id = {{$puzzle_id}}
             var xMarker;
             var zMarker;
 
@@ -213,9 +212,10 @@
 
             //协同数据
             var collaData = [];
-            var ws = new WebSocket("ws://10.17.209.20:8181");
+            var ws = new WebSocket("ws://localhost:8181");
             ws.onopen = function (e) {
                 console.log('Connection to server opened');
+                joinCollaGame();
             }
             ws.onmessage = function(e){
                 tempData = e.data;
@@ -523,124 +523,6 @@
                 controls.update();
                 renderer.render( scene, camera );
 
-            }
-
-
-            //创建协同
-            function createCollaGame(){
-                // 模式相关参数设定
-                if(mode == 25)
-                {
-                                xLength = 5;
-                                yLength = 5;
-                                OBJMTL_Path = "25";
-                                xMarker = [0,30,30,60,60];
-                                zMarker = [0,30,30,60,60];
-                                check_25[0] = ["001","002","003","004","005","006","007","008","009","010","011","012","013","014","015","016","017","018","019","020","021","022","023","024","025"];
-                                check_25[1] = [-60,-60,-60,-60,-60,-30,-30,-30,-30,-30,0,0,0,0,0,30,30,30,30,30,60,60,60,60,60];
-                                check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
-                                check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-                                check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-
-                                var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
-                                var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
-                                backboard = new THREE.Mesh(new THREE.PlaneGeometry(175,175), backboardmaterial);
-                                backboard.position.x = 0;
-                                backboard.position.z = 0;
-                                backboard.position.y = -1;
-                                backboard.rotation.x = -Math.PI/2;
-                                backboard.side = THREE.DoubleSide;
-                                scene.add(backboard);
-                }
-                else if(mode == 100)
-                {
-                                xLength = 10;
-                                yLength = 10;
-                                OBJMTL_Path = "100";
-                                xMarker = [15,45,75,105,135];
-                                zMarker = [15,45,75,105,135];
-                                check_100[0] = ["001","002","003","004","005","006","007","008","009","010","011","012","013","014","015","016","017","018","019","020","021","022","023","024","025","026","027","028","029","030","031","032","033","034","035","036","037","038","039","040","041","042","043","044","045","046","047","048","049","050","051","052","053","054","055","056","057","058","059","060","061","062","063","064","065","066","067","068","069","070","071","072","073","074","075","076","077","078","079","080","081","082","083","084","085","086","087","088","089","090","091","092","093","094","095","096","097","098","099",  "100"];
-                                check_100[1] = [-135,-135,-135,-135,-135,-135,-135,-135,-135,-135,
-                                                -105,-105,-105,-105,-105,-105,-105,-105,-105,-105,
-                                                -75,-75,-75,-75,-75,-75,-75,-75,-75,-75,
-                                                -45,-45,-45,-45,-45,-45,-45,-45,-45,-45,
-                                                -15,-15,-15,-15,-15,-15,-15,-15,-15,-15,
-                                                15,15,15,15,15,15,15,15,15,15,
-                                                45,45,45,45,45,45,45,45,45,45,
-                                                75,75,75,75,75,75,75,75,75,75,
-                                                105,105,105,105,105,105,105,105,105,105,
-                                                135,135,135,135,135,135,135,135,135,135];
-                                check_100[2] = [-135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                                -135,-105,-75,-45,-15,15,45,75,105,135,];
-                                check_100[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
-                                check_100[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
-
-                                var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
-                                var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
-                                backboard = new THREE.Mesh(new THREE.PlaneGeometry(350,350), backboardmaterial);
-                                backboard.position.x = 0;
-                                backboard.position.z = 0;
-                                backboard.position.y = -1;
-                                backboard.rotation.x = -Math.PI/2;
-                                backboard.side = THREE.DoubleSide;
-                                scene.add(backboard);
-                }
-
-                // 模型导入
-                createMtlObj({
-                mtlPath: "objFolder/" + OBJMTL_Path + "/",
-                mtlFileName: OBJMTL_Path + ".mtl",
-                objPath: "objFolder/" + OBJMTL_Path + "/",
-                objFileName: OBJMTL_Path + ".obj",
-                completeCallback:function(object){
-                                object.traverse(function(child) { 
-                                    if (child instanceof THREE.Mesh) { 
-                                    child.material.side = THREE.DoubleSide;//设置贴图模式为双面贴图                 
-                                    child.material.shading=THREE.SmoothShading;//平滑渲染
-                                }
-                });
-                object.emissive=0xffffff;//自发光颜色
-                object.ambient=0x00ffff;//环境光颜色
-                //      object.rotation.x= 0;//x轴方向旋转角度
-                object.position.x = 0;//参考位置坐标X
-                object.position.z = 0;//参考位置坐标y
-                object.scale.x=1;//缩放级别
-                object.scale.y=1;//缩放级别
-                object.scale.z=1;//缩放级别
-
-                object.traverse(function(child) { 
-                                if (child instanceof THREE.Mesh) { 
-                                    child.position.x = (Math.random())*mode*15 + mode*5;//绝对位置坐标X
-                                    child.position.z = (Math.random()-0.5)*mode*8;//绝对位置坐标Y
-                                    objects.push(child);
-                                    collaData.push(child.name+";"+child.position.x+";"+child.position.z);
-                                    // scene.add(child);
-                                }
-                });
-                console.log(collaData);
-                console.log(object);
-                console.log(collaData.toString());
-
-                ws.send("C#"+gameName+"#"+collaData.toString());
-                scene.add(object);//添加到场景中
-                }
-                });
             }
 
              //加入协同

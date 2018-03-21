@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CollaController extends Controller
 {
-	public function Play(Request $request)
+	public function CreateGame(Request $request)
 	{
 		$JigsawName = $request->get('Name');
 		$gamemode = $request->get('Mode');
@@ -22,6 +22,19 @@ class CollaController extends Controller
 		Storage::disk('public')->copy("/puzzleSource/".$JigsawName."/".$JigsawName.".jpg", "/objFolder/".$gamemode."/texture/texture.jpg");
 		Storage::disk('public')->delete("/objFolder/reflact.jpg");
 		Storage::disk('public')->copy("/puzzleSource/".$JigsawName."/".$JigsawName.".jpg", "/objFolder/reflact.jpg");
-		return view('collatest')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id,'gameName' => $gameName]);
+		return view('createcolla')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id,'gameName' => $gameName]);
+	}
+
+	public function JoinGame(Request $request)
+	{
+		$gameName = $request->get('gameName');
+		$puzzle_id = $request->get('puzzle_id');
+		$gamemode = Puzzle::where('puzzle_id',$puzzle_id)->value('mode');
+		$JigsawName = Puzzle::where('puzzle_id',$puzzle_id)->value('puzzle_name'); 
+		Storage::disk('public')->delete("/objFolder/".$gamemode."/texture/texture.jpg");
+		Storage::disk('public')->copy("/puzzleSource/".$JigsawName."/".$JigsawName.".jpg", "/objFolder/".$gamemode."/texture/texture.jpg");
+		Storage::disk('public')->delete("/objFolder/reflact.jpg");
+		Storage::disk('public')->copy("/puzzleSource/".$JigsawName."/".$JigsawName.".jpg", "/objFolder/reflact.jpg");
+		return view('joinColla')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id,'gameName' => $gameName]);
 	}
 }

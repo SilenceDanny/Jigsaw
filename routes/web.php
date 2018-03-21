@@ -28,8 +28,14 @@ Route::get('/puzzle', function(){
 	return view('puzzle');
 });
 
-Route::post('/playColla','CollaController@Play')->middleware('auth');
+Route::post('/createGame','CollaController@CreateGame')->middleware('auth');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+Route::get('/server', function(){
+	return view('serverlist');
+});
+
+Route::post('/joinGame','CollaController@JoinGame')->middleware('auth');

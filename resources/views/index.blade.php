@@ -88,8 +88,8 @@
                             <p style="font-size: 18px; margin-left: 20px;">You have two ways to start a Jigsaw Puzzle: DIY your own or play an existing one.</p>
                             <p class="wow fadeInDown" data-wow-delay="0.5s" data-wow-duration=".5s"></p>
                             <div class="wow fadeInDown" data-wow-delay="0.7s" data-wow-duration=".7s">
-                                <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="#diy" role="button">Upload Picture to Start</a><br>
-                                <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="#explore" role="button">Choose a Existing Puzzle</a>
+                                <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="#explore" role="button">Single Player</a><br>
+                                <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="/server" role="button">Multi Player</a>
                                 <!-- 协同拼图入口 -->
                             </div>
                         </div>
@@ -174,41 +174,6 @@
                 </div>
             </div>
         </section>
-
-        <section id="explore" class="service section">
-            <div class="container">
-
-                <div class="row">
-                    <div class="heading wow fadeInUp">
-                        <h2>Colla Chanllege</h2>
-                    </div>
-                
-                            <?php
-                                $puzzle_choosen = 6;
-                            ?>
-                            <div class="col-sm-6 col-md-3 wow fadeInLeft">
-                                <div class="block">
-                                    {{-- <a onclick="javascript:document.from.submit();">
-                                        <img src= {{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
-                                    </a> --}}
-                                    <form name="playColla" action="playColla" method="POST" enctype="multipart/form-data">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="hidden" name="Name" value={{$puzzles[$puzzle_choosen]->puzzle_name}}>
-                                        <input type="hidden" name="ID" value={{$puzzles[$puzzle_choosen]->puzzle_id}}>
-                                        <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
-                                        <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
-                                        <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
-                                        <input type="test" name="gameName">
-                                    </form>
-                                    <h2>Name:{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h2>
-                                    <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
-                                    
-                                </div>
-                            </div>                
-                </div>
-            </div>
-        </section>
-
 
         <section class="section about bg-gray" id="diy">
             <div class="container">
