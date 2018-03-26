@@ -78,45 +78,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 wow zoomIn">
-                        <div class="block">
-                            <div class="counter text-center">
-                                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;">SEASON ENDS IN:</div>
-                                <ul id="countdown_dashboard">
-                                    {{-- main.js修改时间 --}}
-                                    <li>
-                                        <div class="dash days_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Days</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dash hours_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Hours</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dash minutes_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Minutes</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dash seconds_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Seconds</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div><!-- .row close -->
             </div><!-- .container close -->
         </section><!-- header close -->

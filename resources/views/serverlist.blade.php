@@ -1,50 +1,42 @@
 @extends('layouts.app')
 
-@section('content')
 <?php
     use App\Puzzle;
     $puzzles =App\Puzzle::all();
     $puzzleCnt = count($puzzles);
 ?>
 <div class="container">
+    <button onclick="window.location.reload()">Refresh</button>
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2>Game in Process List</h2>
-                </div>
-                <button onclick="window.location.reload()">Refresh Game List</button>
-                <div id="server"></div>
-            </div>
-        </div>
+        <h2>Game in Process List</h2>
+        <div id="server"></div>
     </div>
 
     <div class="row">
-        <div class="heading wow fadeInUp">
-        <h2>Click picture to create new game</h2>
-        </div>
-                    
-        @for ($i = 0; $i < 8; $i++)
-            <?php
-            $puzzle_choosen = rand(0,$puzzleCnt-1);
-            ?>
-            <div class="col-sm-6 col-md-3 wow fadeInLeft">
-                <div class="block">
-                    <form name="createColla" action="createGame" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="Name" value={{$puzzles[$puzzle_choosen]->puzzle_name}}>
-                        <input type="hidden" name="ID" value={{$puzzles[$puzzle_choosen]->puzzle_id}}>
-                        <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
-                        <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
-                        <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
-                        <input type="text" name="gameName" placeholder="Input game name here...">
-                    </form>
-                    <h4>{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h4>
-                    <h4>{{$puzzles[$puzzle_choosen]->mode or 'Default'}}Block</h4>
-                                    
-                 </div>
-            </div>
-        @endfor                
+        <h2>Input and Click picture to create</h2>
+        @if($puzzleCnt>0)            
+            @for ($i = 0; $i < $puzzleCnt; $i++)
+                <?php
+                $puzzle_choosen = $i;
+                ?>
+                <div class="col-sm-6 col-md-3 wow fadeInLeft">
+                    <div class="block">
+                        <form name="createColla" action="createGame" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="Name" value={{$puzzles[$puzzle_choosen]->puzzle_name}}>
+                            <input type="hidden" name="ID" value={{$puzzles[$puzzle_choosen]->puzzle_id}}>
+                            <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
+                            <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
+                            <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                            <input type="text" name="gameName" placeholder="Input game name here...">
+                        </form>
+                        <h2>{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h4>
+                        <h4>{{$puzzles[$puzzle_choosen]->mode or 'Default'}} Pieces</h4>
+                                        
+                     </div>
+                </div>
+            @endfor
+        @endif                
     </div>
 
     <form id="joinSubmit" hidden="hidden" action="joinGame" method="post" accept-charset="utf-8">
@@ -53,11 +45,12 @@
         <input id="puzzle_idSub" type="hidden" name="puzzle_id" value="">
     </form>
 </div>
-@endsection
 
 <script type="text/javascript" charset="utf-8" async defer>
     var puzzles = eval('<?php echo json_encode($puzzles);?>');
     var serverList = [];
+
+    var list;
 
     var ws = new WebSocket("ws://localhost:8181");
     ws.onopen = function (e) {
@@ -78,7 +71,7 @@
                 serverList[i] = tempServer[i].split(';');
             }
             console.log(serverList);
-            var list = document.getElementById('server');
+            list = document.getElementById('server');
 
             for(var j=0;j<serverList.length;j++)
             {
@@ -101,9 +94,13 @@
                     }
                 }
 
-                list.appendChild(image);
-                holder.appendChild(button);
-                list.appendChild(holder); 
+                if(list!=null)
+                {
+                    list.appendChild(image);
+                    holder.appendChild(button);
+                    list.appendChild(holder);    
+                }
+                 
             }
         }
     }    

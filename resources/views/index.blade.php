@@ -85,7 +85,7 @@
                     <div class="col-md-7">
                         <div class="block">
                             <h1 class="wow fadeInDown" data-wow-delay="0.3s" data-wow-duration=".2s">Welcome to Puzzle Collaborate, {{ Auth::user()->name }} !</h1>
-                            <p style="font-size: 18px; margin-left: 20px;">You have two ways to start a Jigsaw Puzzle: DIY your own or play an existing one.</p>
+                            
                             <p class="wow fadeInDown" data-wow-delay="0.5s" data-wow-duration=".5s"></p>
                             <div class="wow fadeInDown" data-wow-delay="0.7s" data-wow-duration=".7s">
                                 <a class="btn btn-home" style="margin-left: 30px; width: 300px;" href="#explore" role="button">Single Player</a><br>
@@ -94,45 +94,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 wow zoomIn">
-                        <div class="block">
-                            <div class="counter text-center">
-                                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;">SEASON ENDS IN:</div>
-                                <ul id="countdown_dashboard">
-                                    {{-- main.js修改时间 --}}
-                                    <li>
-                                        <div class="dash days_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Days</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dash hours_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Hours</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dash minutes_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Minutes</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dash seconds_dash">
-                                            <div class="digit">0</div>
-                                          <div class="digit">0</div>
-                                            <span class="dash_title">Seconds</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div><!-- .row close -->
             </div><!-- .container close -->
         </section><!-- header close -->
@@ -147,10 +109,10 @@
                     <div class="heading wow fadeInUp">
                         <h2>Recommended Chanllege</h2>
                     </div>
-                    
-                        @for ($i = 0; $i < 8; $i++)
+                    @if($puzzleCnt>0)
+                        @for ($i = 0; $i < $puzzleCnt; $i++)
                             <?php
-                                $puzzle_choosen = rand(0,$puzzleCnt-1);
+                                $puzzle_choosen = $i;
                             ?>
                             <div class="col-sm-6 col-md-3 wow fadeInLeft">
                                 <div class="block">
@@ -167,10 +129,12 @@
                                     </form>
                                     <h2>Name:{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h2>
                                     <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
+                                    <h4>Mode:{{$puzzles[$puzzle_choosen]->mode or 'Default'}} Pieces</h4>
                                     
                                 </div>
                             </div>
-                        @endfor                
+                        @endfor
+                    @endif                
                 </div>
             </div>
         </section>

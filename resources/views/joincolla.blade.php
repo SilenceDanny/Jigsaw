@@ -63,7 +63,7 @@
             {{-- 模型拖动 --}}
 
         <script type="text/javascript"
-            src="{{ URL::asset('js/threejs/TrackBallControls.js') }}"></script>
+            src="{{ URL::asset('js/threejs/OrbitControls.js') }}"></script>
             {{-- 视角控制 --}}
 
         <script type="text/javascript"
@@ -242,7 +242,8 @@
 
                 // 镜头声明
                 camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
-                camera.position.set( 0, 800, 50 );//位置(x，y，z)
+                camera.position.set( 0, 800, 0 );//位置(x，y，z)
+                camera.lookAt(new THREE.Vector3(0,0,0));
 
                 // 场景声明
                 scene = new THREE.Scene();
@@ -252,26 +253,26 @@
                 projector = new THREE.Projector();
                 mouse = new THREE.Vector2();
 
-                // 视角控制声明
-                controls = new THREE.TrackballControls( camera );
-                controls.rotateSpeed = 0.0; // 镜头旋转速度
-                controls.zoomSpeed = 1.0;   // 镜头缩放速度
-                controls.panSpeed = 0.8;    // 镜头平移速度
-                controls.noZoom = false;    // 可缩放
-                controls.noPan = false;     // 可平移
-                controls.staticMoving = true;
-                controls.dynamicDampingFactor = 0.3;
-
                 // 灯光声明
                 // 环境光：颜色白色(0xffffff)，强度2
                 scene.add( new THREE.AmbientLight( 0xffffff , 2) );
 
                 // 渲染器声明
-                renderer = new THREE.WebGLRenderer();
+                renderer = new THREE.WebGLRenderer({antialias: true});
                 renderer.setPixelRatio( window.devicePixelRatio );
                 renderer.setSize( window.innerWidth, window.innerHeight );
                 renderer.setClearColor( 0x615355 );// 背景色设定
                 container.appendChild( renderer.domElement );
+
+                // 视角控制声明
+                controls = new THREE.OrbitControls( camera, renderer.domElement );
+                controls.enableDamping = true; 
+                controls.enableRotate = false;
+                controls.dampingFactor = 0.25;
+                controls.panningMode = THREE.HorizontalPanning; 
+                controls.minDistance = 400;
+                controls.maxDistance = 1000
+                controls.maxPolarAngle = Math.PI / 4;
 
                 // 鼠标监听事件
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
@@ -289,6 +290,7 @@
                 dragControls.addEventListener( 'dragend', function ( event ) 
                 { 
                     controls.enabled = true;
+
                 });
 
 
@@ -507,6 +509,7 @@
 
                     var moveInfo = target.name+";"+target.position.x+";"+target.position.z;
                     console.log(moveInfo);
+
                     moveBlockColla(moveInfo);
                 }
             }
@@ -522,10 +525,9 @@
             function render() {
                 controls.update();
                 renderer.render( scene, camera );
-
             }
 
-             //加入协同
+            //加入协同
             function joinCollaGame(){
                 ws.send("J#"+gameName+"#");
             }
