@@ -1,10 +1,11 @@
 module.exports = CollaData;//服务器端
 
-function CollaData(gameName)//名字是游戏的唯一标识
+function CollaData(gameName, jigsaw_id)//名字是游戏的唯一标识
 {
 	this.gameName = gameName;//声明拼图游戏名称、创建人、初始场景数据
 	this.player = [];
 	this.collaData = [];
+	this.jigsaw_id = jigsaw_id;
 
 	this.gameInit = function(messageMark)//创建游戏
 	{

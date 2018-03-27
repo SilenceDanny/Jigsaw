@@ -6,9 +6,9 @@ function CollaManager()
 {
 	this.collaDataStorage = [];
 
-	this.createGame = function(gameName, messageMark, client_uuid, ws)//创建拼图
+	this.createGame = function(gameName, messageMark, client_uuid, ws, jigsaw_id)//创建拼图
 	{	
-		this.collaDataStorage.push(new CollaDataClass(gameName));
+		this.collaDataStorage.push(new CollaDataClass(gameName,jigsaw_id));
 		for(var i=this.collaDataStorage.length-1;i>=0;i--)//服务器通过ws将拼图信息传递给用户
 		{
 			if(this.collaDataStorage[i].gameName == gameName)
@@ -39,7 +39,7 @@ function CollaManager()
 	            }
 	            sentMessage = tempMessage.toString();
 	            console.log(sentMessage);
-	            ws.send("J#"+sentMessage);
+	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id);
 	            console.log(this.collaDataStorage[i].gameName);//加入成功，显示拼图游戏
 	            break;
 			}
@@ -64,6 +64,21 @@ function CollaManager()
 			    console.log(message);				
 				break;
 			}
+		}
+	}
+
+	this.serverList = function(ws)
+	{
+		var serverMessage = [];
+		if(this.collaDataStorage.length>0)
+		{
+			for(var i=0;i<this.collaDataStorage.length;i++)
+			{
+				serverMessage.push(this.collaDataStorage[i].gameName+";"+this.collaDataStorage[i].jigsaw_id);
+			}
+			console.log(serverMessage);
+			var sentMessage = serverMessage.toString();
+			ws.send("R#" + sentMessage);
 		}
 	}
 }
