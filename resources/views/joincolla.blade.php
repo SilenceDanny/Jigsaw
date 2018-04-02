@@ -202,6 +202,7 @@
             var HH = 0;
             var mm = 0;
             var ss = 0;
+            var time;//声明time，此时不能声明称var time = 0
 
 
             var backboard;
@@ -220,6 +221,10 @@
             ws.onmessage = function(e){
                 tempData = e.data;
                 requestData = tempData.split('#');
+                time = requestData[3];//是requestData数组的第四个
+                //console.log("协同传过来的time："+time);
+                //console.log(requestData[3]);
+
                 if(requestData[0] == 'J')
                 {
                     joinCollaInit(requestData[1]);
@@ -229,7 +234,7 @@
                     requestMove(requestData[2]);
                 }
             }
-            
+            //console.log("外部的时间："+time)
 
             init();
             animate();
@@ -529,6 +534,7 @@
 
             //加入协同
             function joinCollaGame(){
+
                 ws.send("J#"+gameName+"#");
             }
 
@@ -762,9 +768,20 @@
         {{-- 计时器 --}}
         <script>
         window.onload = function(){
-            HH = 0;
-            mm = 0;
-            ss = 0;
+            var start = time;
+            var date2 = new Date();
+            //console.log("计时器里的time："+time);
+            //console.log("赋值的start："+start);
+            //console.log("现在的时间date2："+date2);
+            var date3 = Date.parse(date2)/1000-start;//Date.parse()函数，表示从这个时间开始到和格林尼治标准时间之间的差时，算出来是毫秒
+            var hours = Math.floor(date3/(3600));
+            var leave1 = date3%(3600);
+            var minutes = Math.floor(leave1/(60));
+            var leave2= leave1%(60);
+            var seconds = Math.floor(leave2);
+            HH = hours;
+            mm = minutes;
+            ss = seconds;
             gameTime = '';
             var timer = setInterval(function(){
                 if(isFinished == 0)

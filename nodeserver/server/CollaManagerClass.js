@@ -6,16 +6,18 @@ function CollaManager()
 {
 	this.collaDataStorage = [];
 
-	this.createGame = function(gameName, messageMark, client_uuid, ws, jigsaw_id)//创建拼图
+	this.createGame = function(gameName, messageMark, client_uuid, ws, jigsaw_id,jigsaw_time)//创建拼图
 	{	
-		this.collaDataStorage.push(new CollaDataClass(gameName,jigsaw_id));
+		
+		this.collaDataStorage.push(new CollaDataClass(gameName,jigsaw_id,jigsaw_time));
 		for(var i=this.collaDataStorage.length-1;i>=0;i--)//服务器通过ws将拼图信息传递给用户
 		{
 			if(this.collaDataStorage[i].gameName == gameName)
 			{
 				this.collaDataStorage[i].gameInit(messageMark);
 				this.collaDataStorage[i].addPlayer({"id":client_uuid,"ws":ws});
-				console.log(this.collaDataStorage[i].gameName);//创建完成，拼图游戏启动
+				// console.log(this.collaDataStorage[i].gameName);//创建完成，拼图游戏启动
+				//console.log("更改后的jigsaw_time:"+this.collaDataStorage[i].jigsaw_time);
 				break;
 			}
 		}
@@ -23,6 +25,7 @@ function CollaManager()
 
 	this.joinGame = function(gameName, client_uuid, ws)//加入拼图
 	{
+		console.log("test");
 		for(var i=0;i<this.collaDataStorage.length;i++)//获得游戏列表数据
 		{
 			if(this.collaDataStorage[i].gameName == gameName)//名字作为唯一标识
@@ -39,8 +42,9 @@ function CollaManager()
 	            }
 	            sentMessage = tempMessage.toString();
 	            console.log(sentMessage);
-	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id);
+	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time.toString());//此处注意jigsaw_time的传输方式，必须加上“#”作为标识
 	            console.log(this.collaDataStorage[i].gameName);//加入成功，显示拼图游戏
+	            //console.log(this.collaDataStorage[i].jigsaw_time);
 	            break;
 			}
 		}
