@@ -39,8 +39,8 @@ class CorpController extends Controller
      	$sourceY =imagesy($src_image);
 
 
-      imagejpeg($src_image,"../public/objFolder/".$gamemode."/texture/texture.jpg");
-      imagejpeg($src_image,"../public/objFolder/reflact.jpg");
+      // imagejpeg($src_image,"../public/objFolder/".$gamemode."/texture/texture.jpg");
+      // imagejpeg($src_image,"../public/objFolder/reflact.jpg");
       imagejpeg($src_image,"../public/puzzleSource/".$JigsawName."/".$JigsawName.".jpg");
 
       $puzzle = new Puzzle;
@@ -51,12 +51,45 @@ class CorpController extends Controller
       $puzzle->mode = $gamemode;
       $puzzle->save();
 
-      $tempPuzzle = Puzzle::where('puzzle_name',$JigsawName)->get();
-      $puzzle_id = $tempPuzzle[0]->puzzle_id;
+      $image = "/puzzleSource/".$JigsawName."/".$JigsawName.".jpg";
+
+      // $tempPuzzle = Puzzle::where('puzzle_name',$JigsawName)->get();
+      // $puzzle_id = $tempPuzzle[0]->puzzle_id;
       //
       // return view('puzzle',compact('ImageData'));
-      return view('puzzle')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
+      // return view('puzzle')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
       // return view('puzzle',['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
       // return view('collatest')->with('gamemode',$gamemode);
+      return view('corp')->with(['image'=> $image,'JigsawName'=>$JigsawName]);
+    }
+
+    public function CorpFinish(Request $request)
+    {
+      $targ_w = $targ_h = $_POST['w'];
+      $jpeg_quality = 90;
+
+      $JigsawName = $request->get('JigsawName');
+      $tempPuzzle = Puzzle::where('puzzle_name',$JigsawName)->get();
+      $puzzle_id = $tempPuzzle[0]->puzzle_id;
+      $gamemode = $tempPuzzle[0]->mode;
+
+      $src = $tempPuzzle[0]->path;
+      // $img_r = imagecreatefromjpeg( $src );
+      // /app/imageTemp/image@2018.03.26&03.17.50pm.jpg
+      $img_r = imagecreatefromjpeg( "../public/puzzleSource/".$JigsawName."/".$JigsawName.".jpg" );
+      
+      $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
+
+      imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],
+      $targ_w,$targ_h,$_POST['w'],$_POST['h']);
+
+      // imagejpeg($dst_r,null,$jpeg_quality);
+
+
+
+      imagejpeg($dst_r,"../public/objFolder/".$gamemode."/texture/texture.jpg");
+      imagejpeg($dst_r,"../public/objFolder/reflact.jpg");
+
+      return view('puzzle')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
     }
 }

@@ -212,7 +212,7 @@
 
             //协同数据
             var collaData = [];
-            var ws = new WebSocket("ws://localhost:8181");
+            var ws = new WebSocket("ws://192.144.138.57:8181");
             ws.onopen = function (e) {
                 console.log('Connection to server opened');
                 joinCollaGame();

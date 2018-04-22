@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>PUZZLE COLLABORATE</title>
+        <title>We Pin</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -52,6 +52,9 @@
             <nav class="navbar navbar-fixed-top  navigation " id="top-nav">
               <div class="collapse navbar-toggleable-md" id="navbarResponsive">
                 <ul class="nav navbar-nav menu float-lg-right" id="top-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{route('usercenter')}}">{{ Auth::user()->name }}</a>
+                  </li>
                   <li class="nav-item active">
                     <a class="nav-link" href="#home">HOME</a>
                   </li>
@@ -125,7 +128,7 @@
                                         <input type="hidden" name="ID" value={{$puzzles[$puzzle_choosen]->puzzle_id}}>
                                         <input type="hidden" name="Path" value={{$puzzles[$puzzle_choosen]->path}}>
                                         <input type="hidden" name="Mode" value={{$puzzles[$puzzle_choosen]->mode}}>
-                                        <input type="image" src={{$puzzles[$puzzle_choosen]->path}} style="width: 200px; height: 200px">
+                                        <input type="image" src='{{$puzzles[$puzzle_choosen]->path}}' style="width: 200px; height: 200px">
                                     </form>
                                     <h2>Name:{{$puzzles[$puzzle_choosen]->puzzle_name or 'Default'}}</h2>
                                     <h4>Uploader:{{$puzzles[$puzzle_choosen]->owner_name or 'Default'}}</h4>
@@ -147,11 +150,11 @@
                             <div class="sub-heading">
                             <h3>DIY Your Own Jigsaw Puzzle</h3>
                             </div>
-                            <form action="uploadimg" method="POST"  enctype="multipart/form-data">
+                            <form id="uploadimgform" action="uploadimg" method="POST"  enctype="multipart/form-data">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <h4>Puzzle Name:</h4>
                                 <div class="input-field">
-                                    <input type="text" class="uploadpuzzle" placeholder="Your Jigsaw Name" name="JigsawName">
+                                    <input id="uploadimg_name" type="text" class="uploadpuzzle" placeholder="Your Jigsaw Name" name="JigsawName">
                                 <br><br>
                                 <h4>Upload Photo:</h4>
                                 <span class="btn btn-success fileinput-button">
@@ -160,11 +163,11 @@
                                 </span>
                                 <br><br>
                                 <h4>Game Mode:</h4>
-                                <input type="checkbox" name="gamemode" value="25">25 pieces</input>
-                                <input type="checkbox" name="gamemode" value="100">100 pieces</input>
+                                <input type="radio" checked="checked" name="gamemode" value="25">25 pieces</input>
+                                <input type="radio" name="gamemode" value="100">100 pieces</input>
                                 <br>
-                                <button type="submit" class="btn btn-home">Submit</button>
-                            </form>                    
+                                <button type="submit" class="btn btn-home">Upload Picture</button> 
+                            </form>                   
                         </div>
                     </div>
                 </div>
@@ -178,34 +181,20 @@
                         <div class="block">
                             <div class="heading wow fadeInUp">
                                 <h2>Get In Touch</h2>
-                                <p>If you have any suggestions<br>
+                                <p>If you have any feedbacks,<br>
                                 Plase contact us.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-6 offset-md-3 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="form-group">
-                            <form action="#" method="post" id="contact-form">
-                                <div class="input-field">
-                                    <input type="text" class="form-control" placeholder="Your Name" name="name">
-                                </div>
-                                <div class="input-field">
-                                    <input type="email" class="form-control" placeholder="Email Address" name="email">
-                                </div>
-                                <div class="input-field">
-                                    <textarea class="form-control" placeholder="Your Message" rows="3" name="message"></textarea>
-                                </div>
-                                <button class="btn btn-send" type="submit">SEND</button>
-                            </form>
-
-                            <div id="success">
-                                <p>Your Message was sent successfully</p>
+                        <form action="feedback" method="post" id="contact-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <div class="input-field">
+                                <textarea class="form-control" placeholder="Your Message" rows="3" name="message"></textarea>
                             </div>
-                            <div id="error">
-                                <p>Your Message was not sent successfully</p>
-                            </div>
-                        </div>
+                            <button class="btn btn-send" type="submit">SEND</button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,15 @@ Route::get('/', function () {
     	return view('indexunlog');
 });
 
+Route::post('/feedback','FeedbackController@Feedback')->middleware('auth');
+
+Route::post('/deletefeedback','FeedbackController@DeleteFeedback');
+
+Route::get('/viewfeedback', function()
+{
+	return view('viewfeedback');
+});
+
 Route::post('/uploadimg','Corp\CorpController@Corp')->middleware('auth');
 
 Route::post('/playExists','PlayExistsController@Play')->middleware('auth');
@@ -39,3 +48,10 @@ Route::get('/server', function(){
 });
 
 Route::post('/joinGame','CollaController@JoinGame')->middleware('auth');
+
+Route::post('/corpFinish','Corp\CorpController@CorpFinish')->middleware('auth');
+
+Route::get('/usercenter', function(){
+	return view('user');
+})->middleware('auth')->name('usercenter');
+
