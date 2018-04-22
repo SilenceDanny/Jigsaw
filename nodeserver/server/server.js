@@ -16,13 +16,15 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
     console.log('client connected');
     ws.on('message', function (message) {   //绑定message事件，处理函数为message
         messageMark = message.split('#');
+        //console.log(messageMark[4]);
         if(messageMark[0] == 'J')
         {
             collaManager.joinGame(messageMark[1],client_uuid,ws);
         }
         else if(messageMark[0] == 'C')
         {
-            collaManager.createGame(messageMark[1],messageMark,client_uuid,ws,messageMark[3]);
+            console.log(messageMark);
+            collaManager.createGame(messageMark[1],messageMark,client_uuid,ws,messageMark[3],messageMark[4]);//messageMark[4]就是传输时的jigsaw_time
         }
         else if(messageMark[0] == 'I')
         {

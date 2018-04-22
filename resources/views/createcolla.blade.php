@@ -219,6 +219,7 @@
             ws.onmessage = function(e){
                 tempData = e.data;
                 requestData = tempData.split('#');
+                //console.log("时间："+requestData[3]);
                 if(requestData[0] == 'J')
                 {
                     joinCollaInit(requestData[1]);
@@ -528,6 +529,7 @@
             //创建协同
             function createCollaGame(){
                 // 模式相关参数设定
+                var jigsaw_time = Date.parse(new Date())/1000;//声明jigsaw_time，之后不需要再在服务器端的函数里进行声明
                 if(mode == 25)
                 {
                                 xLength = 5;
@@ -636,7 +638,8 @@
                 console.log(object);
                 console.log(collaData.toString());
                 console.log("C#"+gameName+"#"+collaData.toString()+"#"+puzzle_id);
-                ws.send("C#"+gameName+"#"+collaData.toString()+"#"+puzzle_id);
+                ws.send("C#"+gameName+"#"+collaData.toString()+"#"+puzzle_id+"#"+jigsaw_time+"#");//传输jigsaw_time，必须加上#标识
+                //console.log("jigsaw_time:"+jigsaw_time);
                 scene.add(object);//添加到场景中
                 }
                 });
