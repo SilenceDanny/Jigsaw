@@ -69,6 +69,9 @@
         <script type="text/javascript"
             src="{{ URL::asset('http://www.zhangxinxu.com/study/js/zxx.drag.1.0.js') }}"></script>
             {{-- 缩略图拖动插件 --}}
+        <script type="text/javascript"
+            src="{{ URL::asset('js/jquery.min.js') }}"></script>
+            
 
 
 
@@ -175,7 +178,7 @@
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
-        </div>
+
 
         <script>
             var container, stats;
@@ -190,6 +193,9 @@
             var puzzle_id = {{$puzzle_id}}
             var xMarker;
             var zMarker;
+
+            var dragControls;
+            var onDrag = null;
 
             var check_25 = new Array();
             var check_100 = new Array();
@@ -213,7 +219,8 @@
 
             //协同数据
             var collaData = [];
-            var ws = new WebSocket("ws://192.144.138.57:8181");
+            // var ws = new WebSocket("ws://192.144.138.57:8181");
+            var ws = new WebSocket("ws://localhost:8181");
             ws.onopen = function (e) {
                 console.log('Connection to server opened');
                 joinCollaGame();
@@ -281,21 +288,22 @@
 
                 // 鼠标监听事件
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+                document.addEventListener( 'mousedown', onDocumentMouseDown, false );
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
                 // 拖动控制器声明
-                var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
+                dragControls = new THREE.DragControls( objects, camera, renderer.domElement , onDrag);
 
                 dragControls.addEventListener( 'dragstart', function ( event )
                 { 
                     controls.enabled = false; 
-
+                                      
                 });
 
                 dragControls.addEventListener( 'dragend', function ( event ) 
                 { 
                     controls.enabled = true;
-
+                    // console.log("end");
                 });
 
 
@@ -515,8 +523,26 @@
                     var moveInfo = target.name+";"+target.position.x+";"+target.position.z;
                     console.log(moveInfo);
 
-                    moveBlockColla(moveInfo);
+                    // moveBlockColla(moveInfo);
                 }
+            }
+
+            // 实时协同连续性
+            function onDocumentMouseDown( event ){
+                event.preventDefault();
+
+                mouse.x = ( event.offsetX / renderer.domElement.clientWidth ) * 2 - 1;
+                mouse.y = - ( event.offsetY / renderer.domElement.clientHeight ) * 2 + 1;
+
+                raycaster.setFromCamera( mouse, camera );
+                var intersects = raycaster.intersectObjects( objects );
+                // console.log(intersects);
+                if ( intersects.length > 0 ) {
+                    console.log("start");
+                    
+                    onDrag = intersects[ 0 ].object;
+                    console.log(onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z);
+                } 
             }
 
 
@@ -669,7 +695,7 @@
             function requestMove(data)
             {
                 var tempData = data.split(";")
-                console.log(data);
+                // console.log(data);
                 for(var i=0;i<objects.length;i++)
                 {
                     objects[i].traverse(function(child) { 
@@ -759,6 +785,18 @@
                     });
                 }
             }
+
+            document.getElementById('main').onmousemove = function(event)
+            {
+                if(onDrag != null)
+                {
+                    var moveInfo = onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z;
+                    // console.log(moveInfo);
+
+                    moveBlockColla(moveInfo);
+                }
+            }
+
 
         </script>
 
