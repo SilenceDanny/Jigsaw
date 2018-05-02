@@ -10,6 +10,7 @@ function CollaManager()
 	{	
 		
 		this.collaDataStorage.push(new CollaDataClass(gameName,jigsaw_id,jigsaw_time,jigsaw_progress));
+		console.log("CREATE : "+ jigsaw_progress);
 		for(var i=this.collaDataStorage.length-1;i>=0;i--)//服务器通过ws将拼图信息传递给用户
 		{
 			if(this.collaDataStorage[i].gameName == gameName)
@@ -43,10 +44,14 @@ function CollaManager()
 	            }
 	            sentMessage = tempMessage.toString();
 	            console.log("sent: "+sentMessage);
-	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time.toString()
-	            +"#"+this.collaDataStorage[i].collaData[i][3]+"#");//此处注意jigsaw_time的传输方式，必须加上“#”作为标识
+	            // ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time.toString()
+	            // +"#"+this.collaDataStorage[i].collaData[i][3]+"#");//此处注意jigsaw_time的传输方式，必须加上“#”作为标识
+	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time
+	            +"#"+this.collaDataStorage[i].jigsaw_progress+"#");//此处注意jigsaw_time的传输方式，必须加上“#”作为标识
+	            // console.log("join message: "+"J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time.toString()
+	            // +"#"+this.collaDataStorage[i].jigsaw_progress+"#");
 	            console.log(this.collaDataStorage[i].gameName);//加入成功，显示拼图游戏
-	            console.log("joining progress: "+this.collaDataStorage[i].collaData[i][3]);
+	            console.log("joining progress: "+this.collaDataStorage[i].jigsaw_time);
 	            //console.log(this.collaDataStorage[i].jigsaw_time);
 	            break;
 			}
@@ -78,10 +83,10 @@ function CollaManager()
 			    //messageMark[4] = a[3];
 			    //console.log("message5: "+messageMark[3]);
 			    //jigsaw_progress = a[3];
-			    jigsaw_progress = messageMark[3];
-			    console.log("moveBlock de jigsaw_progress: "+jigsaw_progress);
+			    this.collaDataStorage[i].jigsaw_progress = messageMark[3];
+			    console.log("moveBlock de jigsaw_progress: "+this.collaDataStorage[i].jigsaw_progress);
 			    console.log("another moveBlock de jigsaw_progress: "+messageMark[3]);
-			    //console.log("messaage[6]: "+message[6]);
+			    //console.log("messaage[6]: "+message[6]);s
 			    //console.log("message[8]: "+message[8]);			
 				break;
 			}

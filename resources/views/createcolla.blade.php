@@ -190,6 +190,9 @@
             var xMarker;
             var zMarker;
 
+            var dragControls;
+            var onDrag = null;
+
             var check_25 = new Array();
             var check_100 = new Array();
             var isFinished = 0;
@@ -276,6 +279,7 @@
 
                 // 鼠标监听事件
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+                document.addEventListener( 'mousedown', onDocumentMouseDown, false );
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
                 // 拖动控制器声明
@@ -508,6 +512,35 @@
 
                     var moveInfo = target.name+";"+target.position.x+";"+target.position.z;
                     console.log(moveInfo);
+                    // moveBlockColla(moveInfo);
+                }
+            }
+
+            // 实时协同连续性
+            function onDocumentMouseDown( event ){
+                event.preventDefault();
+
+                mouse.x = ( event.offsetX / renderer.domElement.clientWidth ) * 2 - 1;
+                mouse.y = - ( event.offsetY / renderer.domElement.clientHeight ) * 2 + 1;
+
+                raycaster.setFromCamera( mouse, camera );
+                var intersects = raycaster.intersectObjects( objects );
+                // console.log(intersects);
+                if ( intersects.length > 0 ) {
+                    console.log("start");
+                    
+                    onDrag = intersects[ 0 ].object;
+                    console.log(onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z);
+                } 
+            }
+
+            document.getElementById('main').onmousemove = function(event)
+            {
+                if(onDrag != null)
+                {
+                    var moveInfo = onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z;
+                    // console.log(moveInfo);
+
                     moveBlockColla(moveInfo);
                 }
             }
@@ -531,6 +564,7 @@
             function createCollaGame(){
                 // 模式相关参数设定
                 var jigsaw_time = Date.parse(new Date())/1000;//声明jigsaw_time，之后不需要再在服务器端的函数里进行声明
+                console.log(jigsaw_time);
                 if(mode == 25)
                 {
                                 xLength = 5;

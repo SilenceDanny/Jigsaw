@@ -165,7 +165,6 @@
 
                 <button id="check" onclick="checkSubmit()">Submit</button>
 
-                {{-- <form name="rank" action="saveRank" method="POST" enctype="multipart/form-data"> --}}
                 <form name="rank" action="saveRank" method="POST" enctype="multipart/form-data" onsubmit="return saveReport();">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <input id="Puzzle_id" type="hidden" name="Puzzle_id" value="">
@@ -175,9 +174,13 @@
                     <button id="rankSubmit" type="submit" disabled="true">Exit Game</button>
                 </form>
 
+                
+
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
+
+            <p id="colla_time" hidden></p>
 
 
         <script>
@@ -208,9 +211,11 @@
             var HH = 0;
             var mm = 0;
             var ss = 0;
-            var time;//声明time，此时不能声明称var time = 0
+            // var time;//声明time，此时不能声明称var time = 0
             var jigsaw_progress = new Array();
             var progresscount = 0;
+            
+            var isTimeChecked = 0;
 
 
             var backboard;
@@ -229,20 +234,23 @@
             ws.onmessage = function(e){
                 tempData = e.data;
                 requestData = tempData.split('#');
-                time = requestData[3];//是requestData数组的第四个
+                //是requestData数组的第四个
                 //console.log("协同传过来的time："+time);
                 //console.log(requestData[3]);
                 //jigsaw_progress = requestData[4];
-                console.log("requestData: "+requestData);
-                console.log("requestData[4]: "+requestData[4].split(","));
+                // console.log("requestData: "+requestData);
+                // console.log("requestData[4]: "+requestData[4].split(","));
 
                 if(requestData[0] == 'J')
                 {
+                    document.getElementById("colla_time").innerHTML = requestData[3];
                     joinCollaInit(requestData[1],requestData[4]);
+                    
+                    // console.log(requestData[4]);
                 }
                 else if(requestData[0] == 'I')
                 {
-                    console.log("I de requestData: "+requestData);
+                    // console.log("I de requestData: "+requestData);
                     requestMove(requestData[2],requestData[4]);
                 }
             }
@@ -308,7 +316,6 @@
                 dragControls.addEventListener( 'dragend', function ( event ) 
                 { 
                     controls.enabled = true;
-                    // console.log("end");
                 });
 
 
@@ -570,10 +577,8 @@
             }
 
             function joinCollaInit(data,now_progress){
-
                 var initData = [];
                 tempArr = data.split(',');
-                console.log(tempArr);
                 
                 for(var i = 0;i<tempArr.length;i++)
                 {
@@ -593,7 +598,14 @@
                                 check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
                                 check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
                                 // check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
                                 check_25[4] = now_progress.split(",");
+
+                                for(var i = 0;i<check_25[4].length;i++)
+                                {
+                                    check_25[4][i] = parseInt(check_25[4][i]);
+                                }
+
                                 
                                 //console.log("now progress: "+count);
 
@@ -645,7 +657,15 @@
                                 //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                 //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                 //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
+
                                 check_100[4] = now_progress.split(",");
+
+                                for(var i = 0;i<check_100[4].length;i++)
+                                {
+                                    check_100[4][i] = parseInt(check_100[4][i]);
+                                }
+                                console.log(check_100[4]);
+                                
                                 var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
                                 var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
                                 backboard = new THREE.Mesh(new THREE.PlaneGeometry(350,350), backboardmaterial);
@@ -695,6 +715,8 @@
                 scene.add(object);//添加到场景中
                 }
                 });
+
+
             }
 
             function moveBlockColla(info,jigsaw_progress){
@@ -803,58 +825,32 @@
                 }
             }
 
-            document.getElementById('main').onmousemove = function(event)
-            {
-                if(onDrag != null)
-                {
-                    var moveInfo = onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z;
-                    // console.log(moveInfo);
-
-                    moveBlockColla(moveInfo);
-                }
-            }
-
-
-        </script>
 
 
 
 
         {{-- 计时器 --}}
-        <script>
         window.onload = function(){
-            var start = time;
-            var date2 = new Date();
-            //console.log("计时器里的time："+time);
-            //console.log("赋值的start："+start);
-            //console.log("现在的时间date2："+date2);
-            var date3 = Date.parse(date2)/1000-start;//Date.parse()函数，表示从这个时间开始到和格林尼治标准时间之间的差时，算出来是毫秒
-            var hours = Math.floor(date3/(3600));
-            var leave1 = date3%(3600);
-            var minutes = Math.floor(leave1/(60));
-            var leave2= leave1%(60);
-            var seconds = Math.floor(leave2);
-            HH = hours;
-            mm = minutes;
-            ss = seconds;
-            gameTime = '';
-            
-            if(mode == 25)
-            {
-                for(var i =0;i<25;i++)
-                    {
-                        if(check_25[4][i] == 1)
-                           progresscount++;
-                    }
-            }
-            else if(mode == 100)
-            {
-                for(var i =0;i<100;i++)
-                    {
-                        if(check_100[4][i] == 1)
-                           progresscount++;
-                    }
-            }
+            // var start = document.getElementById("colla_time").innerHTML;
+            // // var start;
+
+            // var date2 = new Date();
+            // // console.log("计时器里的time："+time);
+            // // console.log("赋值的start："+start);
+            // // console.log("现在的时间date2："+date2);
+            // var date3 = Date.parse(date2)/1000-parseInt(start);//Date.parse()函数，表示从这个时间开始到和格林尼治标准时间之间的差时，算出来是毫秒
+            // var hours = Math.floor(date3/(3600));
+            // var leave1 = date3%(3600);
+            // var minutes = Math.floor(leave1/(60));
+            // var leave2= leave1%(60);
+            // var seconds = Math.floor(leave2);
+            // console.log(start);
+
+            // var HH = hours;
+            // var mm = minutes;
+            // var ss = seconds;
+            // var gameTime = '';
+
             var timer = setInterval(function(){
                 if(isFinished == 0)
                 {
@@ -874,35 +870,54 @@
                     gameTime+=":";
                     gameTime+=ss<10?"0"+ss:ss;
                 }
+                
+              
                 document.getElementById("dtime").innerHTML = gameTime;
+                var start = document.getElementById("colla_time").innerHTML;
+                if(start != null && isTimeChecked == 0)
+                {
+                    var date2 = new Date();
+                    // console.log("计时器里的time："+time);
+                    // console.log("赋值的start："+start);
+                    // console.log("现在的时间date2："+date2);
+                    var date3 = Date.parse(date2)/1000-parseInt(start);//Date.parse()函数，表示从这个时间开始到和格林尼治标准时间之间的差时，算出来是毫秒
+                    var hours = Math.floor(date3/(3600));
+                    var leave1 = date3%(3600);
+                    var minutes = Math.floor(leave1/(60));
+                    var leave2= leave1%(60);
+                    var seconds = Math.floor(leave2);
+
+                    HH = hours;
+                    mm = minutes;
+                    ss = seconds;
+                    gameTime = '';
+
+                    isTimeChecked = 1;
+                }
+                // console.log(gameTime);
+
                 if(mode == 25)
                 {
-                    document.getElementById("finishPercentage").innerHTML = progresscount + "/" + mode;
+                    document.getElementById("finishPercentage").innerHTML = check_25[4].sum() + "/" + mode;
                 }
                 else if(mode == 100)
                 {
-                    document.getElementById("finishPercentage").innerHTML = progresscount + "/" + mode;
+                    document.getElementById("finishPercentage").innerHTML = check_100[4].sum() + "/" + mode;
                 }
             },1000);
         };
-        </script>
 
-
-
-
-        <script type="text/javascript">
-            Array.prototype.sum = function (){
+        Array.prototype.sum = function (){
              var result = 0;
              for(var i = 0; i < this.length; i++) {
               result += this[i];
              }
              return result;
-            };
-        </script>
+        };
 
-        <script type="text/javascript">
-            var checkSubmit = function()
-            {
+
+        var checkSubmit = function()
+        {
                 switch(mode)
                 {
                     case 25:
@@ -960,16 +975,10 @@
                     break;
                 }   
                 
-            }
-        </script>
+        }
 
-
-
-
-
-        <script type="text/javascript">
-            var penaltyCount = function()
-            {
+        var penaltyCount = function()
+        {
                 penalty = "";
                 penaltySS+=30;
                 if(penaltySS>=60)
@@ -987,7 +996,18 @@
                 penalty+=penaltyMM<10?"0"+penaltyMM:penaltyMM;
                 penalty+=":";
                 penalty+=penaltySS<10?"0"+penaltySS:penaltySS;
+        }
+
+        document.getElementById('main').onmousemove = function(event)
+        {
+            if(onDrag != null)
+            {
+                var moveInfo = onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z;
+                // console.log(moveInfo);
+
+                moveBlockColla(moveInfo);
             }
+        }
         </script>
     </body>
 </html>

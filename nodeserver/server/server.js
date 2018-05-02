@@ -31,7 +31,7 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
         }
         else if(messageMark[0] == 'I')
         {
-            collaManager.moveBlock(messageMark[1],messageMark,message,messageMark[5]);
+            collaManager.moveBlock(messageMark[1],messageMark,message);
         }
         else if(messageMark[0] == 'R')
         {
@@ -40,8 +40,9 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
     });
 });
 
-// messageMark1--C/J/I
-// messageMark2--游戏名称
-// messageMark3--一个拼图块的x和z坐标
+// messageMark0--C/J/I
+// messageMark1--游戏名称
+// messageMark2--一个拼图块的x和z坐标
+// messageMark3--拼图id
 // messageMark4--时间
 // messageMark5--进度

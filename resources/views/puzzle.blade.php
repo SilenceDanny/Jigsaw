@@ -267,31 +267,31 @@
                 //              
                 //          }
                 //      }
-                THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
-                var mtlLoader = new THREE.MTLLoader();
-                mtlLoader.setPath( options.mtlPath );//设置mtl文件路径
-                mtlLoader.load( options.mtlFileName, function( materials ) {
-                    materials.preload();
-                    var objLoader = new THREE.OBJLoader();
-                    objLoader.setMaterials( materials );//设置三维对象材质库
-                    objLoader.setPath( options.objPath );//设置obj文件所在目录
-                    objLoader.load( options.objFileName, function ( object ) {
-                        if(typeof options.completeCallback=="function"){
-                            options.completeCallback(object);
+                    THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+                    var mtlLoader = new THREE.MTLLoader();
+                    mtlLoader.setPath( options.mtlPath );//设置mtl文件路径
+                    mtlLoader.load( options.mtlFileName, function( materials ) {
+                        materials.preload();
+                        var objLoader = new THREE.OBJLoader();
+                        objLoader.setMaterials( materials );//设置三维对象材质库
+                        objLoader.setPath( options.objPath );//设置obj文件所在目录
+                        objLoader.load( options.objFileName, function ( object ) {
+                            if(typeof options.completeCallback=="function"){
+                                options.completeCallback(object);
 
-                        }
-                    }, function ( xhr ) {
-                        if ( xhr.lengthComputable ) {
-                            var percentComplete = xhr.loaded / xhr.total * 100;
-                            if(typeof options.progress =="function"){
-                                options.progress( Math.round(percentComplete, 2));
                             }
-                        }
-                    }, function(error){
+                        }, function ( xhr ) {
+                            if ( xhr.lengthComputable ) {
+                                var percentComplete = xhr.loaded / xhr.total * 100;
+                                if(typeof options.progress =="function"){
+                                    options.progress( Math.round(percentComplete, 2));
+                                }
+                            }
+                        }, function(error){
 
+                        });
                     });
-                });
-            }
+                }
 
             // 模式相关参数设定
             if(mode == 25)
