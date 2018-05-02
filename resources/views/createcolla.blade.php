@@ -213,6 +213,10 @@
             //协同数据
             var collaData = [];
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            // var ws = new WebSocket("ws://192.144.138.57:8181");
+>>>>>>> 01e5060f296fbd16345fd73fc2540bff4968e7ca
 =======
             // var ws = new WebSocket("ws://192.144.138.57:8181");
 >>>>>>> 01e5060f296fbd16345fd73fc2540bff4968e7ca
