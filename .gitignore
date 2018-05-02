@@ -9,3 +9,9 @@ Homestead.yaml
 .env
 *.jpg
 public/puzzleSource/a r/a r.jpg
+resources/views/joincolla.blade.php
+*.php
+resources/views/createcolla.blade.php
+resources/views/joincolla.blade.php
+resources/views/createcolla.blade.php
+resources/views/joincolla.blade.php

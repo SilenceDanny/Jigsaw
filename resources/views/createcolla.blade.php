@@ -201,6 +201,7 @@
             var HH = 0;
             var mm = 0;
             var ss = 0;
+            var jigsaw_progress = [];
 
 
             var backboard;
@@ -211,7 +212,11 @@
 
             //协同数据
             var collaData = [];
-            var ws = new WebSocket("ws://192.144.138.57:8181");
+<<<<<<< HEAD
+=======
+            // var ws = new WebSocket("ws://192.144.138.57:8181");
+>>>>>>> 01e5060f296fbd16345fd73fc2540bff4968e7ca
+            var ws = new WebSocket("ws://localhost:8181");
             ws.onopen = function (e) {
                 console.log('Connection to server opened');
                 createCollaGame();
@@ -542,6 +547,8 @@
                                 check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
                                 check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
                                 check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                jigsaw_progress = check_25[4];
+                                console.log(jigsaw_progress);
 
                                 var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
                                 var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
@@ -591,6 +598,8 @@
                                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
+                                jigsaw_progress = check_100[4];
+                                console.log(jigsaw_progress);
 
                                 var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
                                 var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
@@ -638,7 +647,8 @@
                 console.log(object);
                 console.log(collaData.toString());
                 console.log("C#"+gameName+"#"+collaData.toString()+"#"+puzzle_id);
-                ws.send("C#"+gameName+"#"+collaData.toString()+"#"+puzzle_id+"#"+jigsaw_time+"#");//传输jigsaw_time，必须加上#标识
+                ws.send("C#"+gameName+"#"+collaData.toString()+"#"+puzzle_id+"#"+jigsaw_time+"#"
+                +jigsaw_progress.toString()+"#");//传输jigsaw_time，必须加上#标识
                 //console.log("jigsaw_time:"+jigsaw_time);
                 scene.add(object);//添加到场景中
                 }
@@ -646,7 +656,15 @@
             }
 
             function moveBlockColla(info){
-                ws.send("I#"+gameName+"#"+info);
+                if(mode == 25)
+                {
+                    jigsaw_progress = check_25[4];
+                }
+                else if(mode == 100)
+                {
+                    jigsaw_progress = check_100[4];
+                }
+                ws.send("I#"+gameName+"#"+info+"#"+jigsaw_progress.toString()+"#");
             }
 
             function requestMove(data)

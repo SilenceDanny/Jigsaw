@@ -69,6 +69,9 @@
         <script type="text/javascript"
             src="{{ URL::asset('http://www.zhangxinxu.com/study/js/zxx.drag.1.0.js') }}"></script>
             {{-- 缩略图拖动插件 --}}
+        <script type="text/javascript"
+            src="{{ URL::asset('js/jquery.min.js') }}"></script>
+            
 
 
 
@@ -175,7 +178,7 @@
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
-        </div>
+
 
         <script>
             var container, stats;
@@ -191,6 +194,9 @@
             var xMarker;
             var zMarker;
 
+            var dragControls;
+            var onDrag = null;
+
             var check_25 = new Array();
             var check_100 = new Array();
             var isFinished = 0;
@@ -203,6 +209,8 @@
             var mm = 0;
             var ss = 0;
             var time;//声明time，此时不能声明称var time = 0
+            var jigsaw_progress = new Array();
+            var progresscount = 0;
 
 
             var backboard;
@@ -213,7 +221,11 @@
 
             //协同数据
             var collaData = [];
-            var ws = new WebSocket("ws://192.144.138.57:8181");
+<<<<<<< HEAD
+=======
+            // var ws = new WebSocket("ws://192.144.138.57:8181");
+>>>>>>> 01e5060f296fbd16345fd73fc2540bff4968e7ca
+            var ws = new WebSocket("ws://localhost:8181");
             ws.onopen = function (e) {
                 console.log('Connection to server opened');
                 joinCollaGame();
@@ -224,14 +236,18 @@
                 time = requestData[3];//是requestData数组的第四个
                 //console.log("协同传过来的time："+time);
                 //console.log(requestData[3]);
+                //jigsaw_progress = requestData[4];
+                console.log("requestData: "+requestData);
+                console.log("requestData[4]: "+requestData[4].split(","));
 
                 if(requestData[0] == 'J')
                 {
-                    joinCollaInit(requestData[1]);
+                    joinCollaInit(requestData[1],requestData[4]);
                 }
                 else if(requestData[0] == 'I')
                 {
-                    requestMove(requestData[2]);
+                    console.log("I de requestData: "+requestData);
+                    requestMove(requestData[2],requestData[4]);
                 }
             }
             //console.log("外部的时间："+time)
@@ -281,21 +297,22 @@
 
                 // 鼠标监听事件
                 document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+                document.addEventListener( 'mousedown', onDocumentMouseDown, false );
                 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
                 // 拖动控制器声明
-                var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
+                dragControls = new THREE.DragControls( objects, camera, renderer.domElement , onDrag);
 
                 dragControls.addEventListener( 'dragstart', function ( event )
                 { 
                     controls.enabled = false; 
-
+                                      
                 });
 
                 dragControls.addEventListener( 'dragend', function ( event ) 
                 { 
                     controls.enabled = true;
-
+                    // console.log("end");
                 });
 
 
@@ -515,8 +532,26 @@
                     var moveInfo = target.name+";"+target.position.x+";"+target.position.z;
                     console.log(moveInfo);
 
-                    moveBlockColla(moveInfo);
+                    // moveBlockColla(moveInfo);
                 }
+            }
+
+            // 实时协同连续性
+            function onDocumentMouseDown( event ){
+                event.preventDefault();
+
+                mouse.x = ( event.offsetX / renderer.domElement.clientWidth ) * 2 - 1;
+                mouse.y = - ( event.offsetY / renderer.domElement.clientHeight ) * 2 + 1;
+
+                raycaster.setFromCamera( mouse, camera );
+                var intersects = raycaster.intersectObjects( objects );
+                // console.log(intersects);
+                if ( intersects.length > 0 ) {
+                    console.log("start");
+                    
+                    onDrag = intersects[ 0 ].object;
+                    console.log(onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z);
+                } 
             }
 
 
@@ -538,7 +573,8 @@
                 ws.send("J#"+gameName+"#");
             }
 
-            function joinCollaInit(data){
+            function joinCollaInit(data,now_progress){
+
                 var initData = [];
                 tempArr = data.split(',');
                 console.log(tempArr);
@@ -560,7 +596,10 @@
                                 check_25[1] = [-60,-60,-60,-60,-60,-30,-30,-30,-30,-30,0,0,0,0,0,30,30,30,30,30,60,60,60,60,60];
                                 check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
                                 check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-                                check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                // check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                check_25[4] = now_progress.split(",");
+                                
+                                //console.log("now progress: "+count);
 
                                 var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
                                 var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
@@ -605,12 +644,12 @@
                                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
-                                check_100[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
-
+                                // check_100[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                //                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
+                                check_100[4] = now_progress.split(",");
                                 var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
                                 var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
                                 backboard = new THREE.Mesh(new THREE.PlaneGeometry(350,350), backboardmaterial);
@@ -662,14 +701,18 @@
                 });
             }
 
-            function moveBlockColla(info){
-                ws.send("I#"+gameName+"#"+info);
+            function moveBlockColla(info,jigsaw_progress){
+                if(mode == 25)
+                    jigsaw_progress = check_25[4];
+                else if(mode == 100)
+                    jigsaw_progress = check_100[4];
+                ws.send("I#"+gameName+"#"+info+"#"+jigsaw_progress.toString()+"#");
             }
 
             function requestMove(data)
             {
                 var tempData = data.split(";")
-                console.log(data);
+                // console.log(data);
                 for(var i=0;i<objects.length;i++)
                 {
                     objects[i].traverse(function(child) { 
@@ -697,6 +740,8 @@
                                             {
                                                 check_25[4][marker] = 0;
                                             }
+                                            //jigsaw_progress = check_25[4];
+                                            //console.log("aftermove progress: "+jigsaw_progress);
                                 }
                                 else if(mode == 100)
                                 {
@@ -716,6 +761,8 @@
                                             {
                                                 check_100[4][marker] = 0;
                                             }
+                                            //jigsaw_progress = check_100[4];
+                                            //console("aftermove progress: "+jigsaw_progress);
                                 }
 
 
@@ -760,6 +807,18 @@
                 }
             }
 
+            document.getElementById('main').onmousemove = function(event)
+            {
+                if(onDrag != null)
+                {
+                    var moveInfo = onDrag.name+";"+onDrag.position.x+";"+onDrag.position.z;
+                    // console.log(moveInfo);
+
+                    moveBlockColla(moveInfo);
+                }
+            }
+
+
         </script>
 
 
@@ -783,6 +842,23 @@
             mm = minutes;
             ss = seconds;
             gameTime = '';
+            
+            if(mode == 25)
+            {
+                for(var i =0;i<25;i++)
+                    {
+                        if(check_25[4][i] == 1)
+                           progresscount++;
+                    }
+            }
+            else if(mode == 100)
+            {
+                for(var i =0;i<100;i++)
+                    {
+                        if(check_100[4][i] == 1)
+                           progresscount++;
+                    }
+            }
             var timer = setInterval(function(){
                 if(isFinished == 0)
                 {
@@ -805,11 +881,11 @@
                 document.getElementById("dtime").innerHTML = gameTime;
                 if(mode == 25)
                 {
-                    document.getElementById("finishPercentage").innerHTML = check_25[4].sum() + "/" + mode;
+                    document.getElementById("finishPercentage").innerHTML = progresscount + "/" + mode;
                 }
                 else if(mode == 100)
                 {
-                    document.getElementById("finishPercentage").innerHTML = check_100[4].sum() + "/" + mode;
+                    document.getElementById("finishPercentage").innerHTML = progresscount + "/" + mode;
                 }
             },1000);
         };

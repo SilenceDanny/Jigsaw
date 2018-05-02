@@ -19,16 +19,19 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
         //console.log(messageMark[4]);
         if(messageMark[0] == 'J')
         {
-            collaManager.joinGame(messageMark[1],client_uuid,ws);
+            collaManager.joinGame(messageMark[1],client_uuid,ws,messageMark[5]);
         }
         else if(messageMark[0] == 'C')
         {
             console.log(messageMark);
-            collaManager.createGame(messageMark[1],messageMark,client_uuid,ws,messageMark[3],messageMark[4]);//messageMark[4]就是传输时的jigsaw_time
+            collaManager.createGame(
+                messageMark[1],messageMark,client_uuid,ws,messageMark[3],messageMark[4],messageMark[5].split(",")
+            );
+            //messageMark[4]就是传输时的jigsaw_time
         }
         else if(messageMark[0] == 'I')
         {
-            collaManager.moveBlock(messageMark[1],messageMark,message);
+            collaManager.moveBlock(messageMark[1],messageMark,message,messageMark[5]);
         }
         else if(messageMark[0] == 'R')
         {
@@ -36,3 +39,9 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
         }
     });
 });
+
+// messageMark1--C/J/I
+// messageMark2--游戏名称
+// messageMark3--一个拼图块的x和z坐标
+// messageMark4--时间
+// messageMark5--进度

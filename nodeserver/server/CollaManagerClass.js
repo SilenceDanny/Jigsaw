@@ -6,10 +6,10 @@ function CollaManager()
 {
 	this.collaDataStorage = [];
 
-	this.createGame = function(gameName, messageMark, client_uuid, ws, jigsaw_id,jigsaw_time)//创建拼图
+	this.createGame = function(gameName, messageMark, client_uuid, ws, jigsaw_id,jigsaw_time,jigsaw_progress)//创建拼图
 	{	
 		
-		this.collaDataStorage.push(new CollaDataClass(gameName,jigsaw_id,jigsaw_time));
+		this.collaDataStorage.push(new CollaDataClass(gameName,jigsaw_id,jigsaw_time,jigsaw_progress));
 		for(var i=this.collaDataStorage.length-1;i>=0;i--)//服务器通过ws将拼图信息传递给用户
 		{
 			if(this.collaDataStorage[i].gameName == gameName)
@@ -18,6 +18,7 @@ function CollaManager()
 				this.collaDataStorage[i].addPlayer({"id":client_uuid,"ws":ws});
 				// console.log(this.collaDataStorage[i].gameName);//创建完成，拼图游戏启动
 				//console.log("更改后的jigsaw_time:"+this.collaDataStorage[i].jigsaw_time);
+				//console.log("progress: "+this.collaDataStorage[i].jigsaw_progress);
 				break;
 			}
 		}
@@ -41,9 +42,11 @@ function CollaManager()
 	                	this.collaDataStorage[i].collaData[j][2]);
 	            }
 	            sentMessage = tempMessage.toString();
-	            console.log(sentMessage);
-	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time.toString());//此处注意jigsaw_time的传输方式，必须加上“#”作为标识
+	            console.log("sent: "+sentMessage);
+	            ws.send("J#"+sentMessage+"#"+this.collaDataStorage[i].jigsaw_id+"#"+this.collaDataStorage[i].jigsaw_time.toString()
+	            +"#"+this.collaDataStorage[i].collaData[i][3]+"#");//此处注意jigsaw_time的传输方式，必须加上“#”作为标识
 	            console.log(this.collaDataStorage[i].gameName);//加入成功，显示拼图游戏
+	            console.log("joining progress: "+this.collaDataStorage[i].collaData[i][3]);
 	            //console.log(this.collaDataStorage[i].jigsaw_time);
 	            break;
 			}
@@ -57,6 +60,10 @@ function CollaManager()
 			if(this.collaDataStorage[i].gameName == gameName)
 			{
 				this.collaDataStorage[i].instruction(messageMark);
+				//console.log("messageMark : "+messageMark);
+				//this.collaDataStorage[i].jigsaw_progress = messageMark[4];//此时是messagemark有值
+				//console.log("after moving progress: "+messageMark[4]);
+				//console.log("another after moving progress: "+this.collaDataStorage[i].jigsaw_progress);
 				for(var j = 0;j<this.collaDataStorage[i].player.length;j++)
 			    {
 			        var clientSocket = this.collaDataStorage[i].player[j].ws;
@@ -65,7 +72,17 @@ function CollaManager()
 			            clientSocket.send(message);
 			        }
 			    }
-			    console.log(message);				
+			    console.log("xxxxx: "+message);	
+			    //var a = new Array();
+			    //a = message.split("#");
+			    //messageMark[4] = a[3];
+			    //console.log("message5: "+messageMark[3]);
+			    //jigsaw_progress = a[3];
+			    jigsaw_progress = messageMark[3];
+			    console.log("moveBlock de jigsaw_progress: "+jigsaw_progress);
+			    console.log("another moveBlock de jigsaw_progress: "+messageMark[3]);
+			    //console.log("messaage[6]: "+message[6]);
+			    //console.log("message[8]: "+message[8]);			
 				break;
 			}
 		}
