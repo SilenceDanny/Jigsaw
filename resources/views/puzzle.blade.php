@@ -317,7 +317,11 @@
             backboard.rotation.x = -Math.PI/2;
             backboard.side = THREE.DoubleSide;
             scene.add(backboard);
-            console.log(scene);
+            console.log(checkarray[0]);
+            console.log(checkarray[1]);
+            console.log(checkarray[2]);
+            console.log(checkarray[3]);
+            console.log(checkarray[4]);
 
             // 模型导入
             createMtlObj({
@@ -519,6 +523,7 @@
                             {
                                 checkarray[3][p] = 0;
                             }
+                            console.log(checkarray[3]);
                         }
                     }
                 }

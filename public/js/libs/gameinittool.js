@@ -26,6 +26,7 @@ var gameinittool = function(mode, xMarker, zMarker, checkarray)
 		xMarker[0] = 0;
 		zMarker[0] = 0;
 		var cordnate = 30;
+		var cordnate_2 = 0;
 		var side = Math.sqrt(mode);
 		for(var i = 1;i < side; i++)
 		{
@@ -37,30 +38,28 @@ var gameinittool = function(mode, xMarker, zMarker, checkarray)
 			}
 		}
 		cordnate = -(cordnate - 30);
+		cordnate_2 = cordnate;
 		for(var j = 0;j < mode; j++)
 		{
-			var k = 0;
-			checkarray[1][j] = cordnate;
-			checkarray[2][k] = cordnate;
-			checkarray[3][j] = 0;
-			checkarray[4][j] = 0;
+			checkarray[1].push(cordnate);
+			checkarray[2].push(cordnate_2);
+			checkarray[3].push(0);
+			checkarray[4].push(0);
+			cordnate_2 = cordnate_2 + 30;
 			if(j%side == side - 1)
 			{
 				cordnate = cordnate + 30;
+				cordnate_2 = -cordnate_2 + 30;
 			}
-			k = (k + side);
-			if(k >= mode)
-			{
-				k = k % side;
-			}
+			
+
 		}
 
 	}
 	else if(mode%2 == 0)
 	{
-		xMarker[0] = 0;
-		zMarker[0] = 0;
 		var cordnate = 15;
+		var cordnate_2 = 0;
 		var side = Math.sqrt(mode);
 		for(var i = 0;i < side/2;i++)
 		{
@@ -69,22 +68,20 @@ var gameinittool = function(mode, xMarker, zMarker, checkarray)
 			cordnate = cordnate + 30;
 		}
 		cordnate = -(cordnate - 30);
+		cordnate_2 = cordnate;
 		for(var j = 0;j < mode; j++)
 		{
-			var k = 0;
-			checkarray[1][j] = cordnate;
-			checkarray[2][k] = cordnate;
-			checkarray[3][j] = 0;
-			checkarray[4][j] = 0;
+			checkarray[1].push(cordnate);
+			checkarray[2].push(cordnate_2);
+			checkarray[3].push(0);
+			checkarray[4].push(0);
+			cordnate_2 = cordnate_2 + 30;
 			if(j%side == side - 1)
 			{
 				cordnate = cordnate + 30;
+				cordnate_2 = -cordnate_2 + 30;
 			}
-			k = (k + side);
-			if(k >= mode)
-			{
-				k = k % side;
-			}
+			
 		}
 	}
 }
