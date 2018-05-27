@@ -163,8 +163,18 @@
                                 </span>
                                 <br><br>
                                 <h4>Game Mode:</h4>
-                                <input type="radio" checked="checked" name="gamemode" value="25">25 pieces</input>
-                                <input type="radio" name="gamemode" value="100">100 pieces</input>
+                                {{-- <input type="radio" checked="checked" name="gamemode" value="25">25 pieces</input>
+                                <input type="radio" name="gamemode" value="100">100 pieces</input> --}}
+                                <select name="gamemode">
+                                    <option value="25">25 pieces</option>
+                                    <option value="36">36 pieces</option>
+                                    <option value="64">64 pieces</option>
+                                    <option value="100">100 pieces</option>
+                                    <option value="225">225 pieces</option>
+                                    <option value="400">400 pieces</option>
+                                    <option value="625">625 pieces</option>
+                                    <option value="1024">1024 pieces</option>
+                                </select>
                                 <br>
                                 <button type="submit" class="btn btn-home">Upload Picture</button> 
                             </form>                   

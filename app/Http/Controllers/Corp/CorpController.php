@@ -27,6 +27,17 @@ class CorpController extends Controller
       $JigsawName = $request->get('JigsawName');
       $gamemode = $request->get('gamemode');
 
+      $checkName = Puzzle::All();
+
+      for($i = 0;$i<count($checkName);$i++)
+      {
+          if($JigsawName == $checkName[$i]->puzzle_name)
+          {
+            return view("index");
+          }
+      }
+
+
       //创建拼图文件夹
       // Storage::makeDirectory($JigsawName);
       Storage::disk('puzzleSource')->makeDirectory($JigsawName);
@@ -38,9 +49,6 @@ class CorpController extends Controller
     	$sourceX =imagesx($src_image);
      	$sourceY =imagesy($src_image);
 
-
-      // imagejpeg($src_image,"../public/objFolder/".$gamemode."/texture/texture.jpg");
-      // imagejpeg($src_image,"../public/objFolder/reflact.jpg");
       imagejpeg($src_image,"../public/puzzleSource/".$JigsawName."/".$JigsawName.".jpg");
 
       $puzzle = new Puzzle;
@@ -74,21 +82,17 @@ class CorpController extends Controller
       $gamemode = $tempPuzzle[0]->mode;
 
       $src = $tempPuzzle[0]->path;
-      // $img_r = imagecreatefromjpeg( $src );
-      // /app/imageTemp/image@2018.03.26&03.17.50pm.jpg
+
       $img_r = imagecreatefromjpeg( "../public/puzzleSource/".$JigsawName."/".$JigsawName.".jpg" );
-      
+
       $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
 
       imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],
       $targ_w,$targ_h,$_POST['w'],$_POST['h']);
 
-      // imagejpeg($dst_r,null,$jpeg_quality);
-
-
-
-      imagejpeg($dst_r,"../public/objFolder/".$gamemode."/texture/texture.jpg");
-      imagejpeg($dst_r,"../public/objFolder/reflact.jpg");
+      imagejpeg($dst_r,"../public/objFolder/".$gamemode."/texture/texture.jpg",$jpeg_quality);
+      imagejpeg($dst_r,"../public/objFolder/reflact.jpg",$jpeg_quality);
+      imagejpeg($dst_r,"../public/puzzleSource/".$JigsawName."/".$JigsawName.".jpg",$jpeg_quality);
 
       return view('puzzle')->with(['gamemode'=> $gamemode,'puzzle_id' => $puzzle_id]);
     }

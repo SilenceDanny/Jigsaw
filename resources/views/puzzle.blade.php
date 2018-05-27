@@ -70,6 +70,9 @@
             src="{{ URL::asset('http://www.zhangxinxu.com/study/js/zxx.drag.1.0.js') }}"></script>
             {{-- 缩略图拖动插件 --}}
 
+        <script type="text/javascript"
+            src="{{ URL::asset('js/libs/gameinittool.js') }}"></script>
+
 
 
 
@@ -183,13 +186,13 @@
             var pointLight;
             var xLength, yLength, OBJMTL_Path;
 
-            // 模式相关参数：25块或100块
+            // 模式相关参数
             var mode = {{$gamemode}};
             var xMarker;
             var zMarker;
+            var side;
 
-            var check_25 = new Array();
-            var check_100 = new Array();
+            var checkarray = new Array();
             var isFinished = 0;
             var penalty = "";
             var penaltyHH = 0;
@@ -243,7 +246,7 @@
                 controls.dampingFactor = 0.25;
                 controls.panningMode = THREE.HorizontalPanning; 
                 controls.minDistance = 400;
-                controls.maxDistance = 1000
+                controls.maxDistance = 3500;
                 controls.maxPolarAngle = Math.PI / 4;
 
                 // 鼠标监听事件
@@ -293,79 +296,28 @@
                     });
                 }
 
-            // 模式相关参数设定
-            if(mode == 25)
-            {
-                xLength = 5;
-                yLength = 5;
-                OBJMTL_Path = "25";
-                xMarker = [0,30,30,60,60];
-                zMarker = [0,30,30,60,60];
-                check_25[0] = ["001","002","003","004","005","006","007","008","009","010","011","012","013","014","015","016","017","018","019","020","021","022","023","024","025"];
-                check_25[1] = [-60,-60,-60,-60,-60,-30,-30,-30,-30,-30,0,0,0,0,0,30,30,30,30,30,60,60,60,60,60];
-                check_25[2] = [-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60,-60,-30,0,30,60];
-                check_25[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-                check_25[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            xMarker = new Array();
+            zMarker = new Array();
+            checkarray[0] = new Array();
+            checkarray[1] = new Array();
+            checkarray[2] = new Array();
+            checkarray[3] = new Array();
+            checkarray[4] = new Array();
+            OBJMTL_Path = mode.toString();
+            side = Math.sqrt(mode);
+            gameinittool(mode, xMarker, zMarker, checkarray);
 
-                var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
-                var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
-                backboard = new THREE.Mesh(new THREE.PlaneGeometry(175,175), backboardmaterial);
-                backboard.position.x = 0;
-                backboard.position.z = 0;
-                backboard.position.y = -1;
-                backboard.rotation.x = -Math.PI/2;
-                backboard.side = THREE.DoubleSide;
-                scene.add(backboard);
-            }
-            else if(mode == 100)
-            {
-                xLength = 10;
-                yLength = 10;
-                OBJMTL_Path = "100";
-                xMarker = [15,45,75,105,135];
-                zMarker = [15,45,75,105,135];
-                check_100[0] = ["001","002","003","004","005","006","007","008","009","010","011","012","013","014","015","016","017","018","019","020","021","022","023","024","025","026","027","028","029","030","031","032","033","034","035","036","037","038","039","040","041","042","043","044","045","046","047","048","049","050","051","052","053","054","055","056","057","058","059","060","061","062","063","064","065","066","067","068","069","070","071","072","073","074","075","076","077","078","079","080","081","082","083","084","085","086","087","088","089","090","091","092","093","094","095","096","097","098","099",  "100"];
-                check_100[1] = [-135,-135,-135,-135,-135,-135,-135,-135,-135,-135,
-                                -105,-105,-105,-105,-105,-105,-105,-105,-105,-105,
-                                -75,-75,-75,-75,-75,-75,-75,-75,-75,-75,
-                                -45,-45,-45,-45,-45,-45,-45,-45,-45,-45,
-                                -15,-15,-15,-15,-15,-15,-15,-15,-15,-15,
-                                15,15,15,15,15,15,15,15,15,15,
-                                45,45,45,45,45,45,45,45,45,45,
-                                75,75,75,75,75,75,75,75,75,75,
-                                105,105,105,105,105,105,105,105,105,105,
-                                135,135,135,135,135,135,135,135,135,135];
-                check_100[2] = [-135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,
-                                -135,-105,-75,-45,-15,15,45,75,105,135,];
-                check_100[3] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
-                check_100[4] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
-
-                var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
-                var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
-                backboard = new THREE.Mesh(new THREE.PlaneGeometry(350,350), backboardmaterial);
-                backboard.position.x = 0;
-                backboard.position.z = 0;
-                backboard.position.y = -1;
-                backboard.rotation.x = -Math.PI/2;
-                backboard.side = THREE.DoubleSide;
-                scene.add(backboard);
-            }
+            var backboardwide = 35*side;
+            var backboardtexture = new THREE.TextureLoader().load( "backboard.png" );
+            var backboardmaterial = new THREE.MeshBasicMaterial( { map: backboardtexture, transparent: true } );
+            backboard = new THREE.Mesh(new THREE.PlaneGeometry(backboardwide,backboardwide), backboardmaterial);
+            backboard.position.x = 0;
+            backboard.position.z = 0;
+            backboard.position.y = -1;
+            backboard.rotation.x = -Math.PI/2;
+            backboard.side = THREE.DoubleSide;
+            scene.add(backboard);
+            console.log(scene);
 
             // 模型导入
             createMtlObj({
@@ -391,8 +343,8 @@
 
             object.traverse(function(child) { 
                 if (child instanceof THREE.Mesh) { 
-                    child.position.x = (Math.random())*mode*15 + mode*5;//绝对位置坐标X
-                    child.position.z = (Math.random()-0.5)*mode*8;//绝对位置坐标Y
+                    child.position.x = (Math.random())*mode*15 + (mode/2)*5;//绝对位置坐标X
+                    child.position.z = (Math.random()-0.5)*(mode/2)*8;//绝对位置坐标Y
                     objects.push(child);
                     // scene.add(child);
                 }
@@ -464,22 +416,22 @@
                 // 网格贴合逻辑
                 if ( intersects.length > 0 ) {
                     var target = intersects[ 0 ].object;
-                    if(mode == 25)
+                    if(mode%2 == 1)
                     {
                         var marker;
-                        for(marker = 0; marker<25; marker++)
+                        for(marker = 0; marker<mode; marker++)
                         {
-                            if(target.name.toString() == check_25[0][marker])
+                            if(target.name.toString() == checkarray[0][marker])
                             {
                                 break;
                             }
                         }
-                        if(target.position.x > -75 && target.position.x < 75 && target.position.z >- 75 && target.position.z < 75)
+                        if(target.position.x > -(side/2*30) && target.position.x < (side/2*30) && target.position.z > -(side/2*30) && target.position.z < (side/2*30))
                         {
                             var positionMarkerX;
                             var positionMarkerZ;
 
-                            check_25[4][marker] = 1;
+                            checkarray[4][marker] = 1;
 
                             if(target.position.x >= 0)
                             {
@@ -505,25 +457,25 @@
                         }
                         else
                         {
-                            check_25[4][marker] = 0;
+                            checkarray[4][marker] = 0;
                         }
                     }        
-                    else if(mode == 100)
+                    else if(mode%2 == 0)
                     {
                         var marker;
-                        for(marker = 0; marker<100; marker++)
+                        for(marker = 0; marker<mode; marker++)
                         {
-                            if(target.name.toString() == check_100[0][marker])
+                            if(target.name.toString() == checkarray[0][marker])
                             {
                                 break;
                             }
                         }
-                        if(target.position.x > -150 && target.position.x < 150 && target.position.z >- 150 && target.position.z < 150)
+                        if(target.position.x > -(side/2*30) && target.position.x < (side/2*30) && target.position.z > -(side/2*30) && target.position.z < (side/2*30))
                         {
                             var positionMarkerX;
                             var positionMarkerZ;
 
-                            check_100[4][marker] = 1;
+                            checkarray[4][marker] = 1;
 
                             if(target.position.x >= 0)
                             {
@@ -549,43 +501,23 @@
                         }
                         else
                         {
-                            check_100[4][marker] = 0;
+                            checkarray[4][marker] = 0;
                         }
                     }
                     // 平面位置调整，使贴合能更精准
                     target.position.y = 0;
-                    if(mode == 25)
-                    {
-                        for(var p = 0;p<25;p++)
-                        {
-                            if(target.name.toString() == check_25[0][p])
-                            {
-                                if(target.position.x == check_25[1][p]&&target.position.z == check_25[2][p])
-                                {
-                                    check_25[3][p] = 1;
-                                }
-                                else
-                                {
-                                    check_25[3][p] = 0;
-                                }
-                            }
-                        }
-                    }
 
-                    if(mode == 100)
+                    for(var p = 0;p<mode;p++)
                     {
-                        for(var p = 0;p<100;p++)
+                        if(target.name.toString() == checkarray[0][p])
                         {
-                            if(target.name.toString() == check_100[0][p])
+                            if(target.position.x == checkarray[1][p]&&target.position.z == checkarray[2][p])
                             {
-                                if(target.position.x == check_100[1][p]&&target.position.z == check_100[2][p])
-                                {
-                                    check_100[3][p] = 1;
-                                }
-                                else
-                                {
-                                    check_100[3][p] = 0;
-                                }
+                                checkarray[3][p] = 1;
+                            }
+                            else
+                            {
+                                checkarray[3][p] = 0;
                             }
                         }
                     }
@@ -638,14 +570,7 @@
                     gameTime+=ss<10?"0"+ss:ss;
                 }
                 document.getElementById("dtime").innerHTML = gameTime;
-                if(mode == 25)
-                {
-                    document.getElementById("finishPercentage").innerHTML = check_25[4].sum() + "/" + mode;
-                }
-                else if(mode == 100)
-                {
-                    document.getElementById("finishPercentage").innerHTML = check_100[4].sum() + "/" + mode;
-                }
+                document.getElementById("finishPercentage").innerHTML = checkarray[4].sum() + "/" + mode;
             },1000);
         };
         </script>
@@ -666,63 +591,31 @@
         <script type="text/javascript">
             var checkSubmit = function()
             {
-                switch(mode)
+                if(checkarray[3].sum() == mode)
                 {
-                    case 25:
-                    if(check_25[3].sum() == mode)
-                    {
-                        isFinished = 1;
-                        alert("Success");
+                    isFinished = 1;
+                    alert("Success");
 
 
-                        document.getElementById("rankSubmit").disabled = false;
+                    document.getElementById("rankSubmit").disabled = false;
 
-                        var totaltime = HH*3600+mm*60+ss+penaltyHH*3600+penaltyMM*60+penaltySS;
+                    var totaltime = HH*3600+mm*60+ss+penaltyHH*3600+penaltyMM*60+penaltySS;
 
-                        var tmp_puzzle_id = <?php echo $puzzle_id;?>;
-                        var tmp_player_id = <?php echo Auth::user()->id;?>;
-                        var tmp_player_name = "<?php echo Auth::user()->name;?>";
-                        document.getElementById("Puzzle_id").value = tmp_puzzle_id;
-                        document.getElementById("Player_id").value = tmp_player_id;
-                        document.getElementById("Player_name").value = tmp_player_name;
-                        document.getElementById("Time").value = totaltime;
+                    var tmp_puzzle_id = <?php echo $puzzle_id;?>;
+                    var tmp_player_id = <?php echo Auth::user()->id;?>;
+                    var tmp_player_name = "<?php echo Auth::user()->name;?>";
+                    document.getElementById("Puzzle_id").value = tmp_puzzle_id;
+                    document.getElementById("Player_id").value = tmp_player_id;
+                    document.getElementById("Player_name").value = tmp_player_name;
+                    document.getElementById("Time").value = totaltime;
 
-                    }
-                    else
-                    {
-                        penaltyCount();
-                        alert("failed");
-                        document.getElementById("penaltyTime").innerHTML = penalty;
-                    }
-                    break;
-
-                    case 100:
-                    if(check_100[3].sum() == mode)
-                    {
-                        isFinished = 1;
-                        alert("Success");
-
-                        document.getElementById("rankSubmit").disabled = false;
-
-                        var totaltime = HH*3600+mm*60+ss+penaltyHH*3600+penaltyMM*60+penaltySS;
-
-                        var tmp_puzzle_id = <?php echo $puzzle_id;?>;
-                        var tmp_player_id = <?php echo Auth::user()->id;?>;
-                        var tmp_player_name = "<?php echo Auth::user()->name;?>";
-                        document.getElementById("Puzzle_id").value = tmp_puzzle_id;
-                        document.getElementById("Player_id").value = tmp_player_id;
-                        document.getElementById("Player_name").value = tmp_player_name;
-                        document.getElementById("Time").value = totaltime;
-                    }
-                    else
-                    {
-                        penaltyCount();
-                        alert("failed");
-                        document.getElementById("penaltyTime").innerHTML = penalty;
-                    }
-                    break;
-                }   
-                
+                }
+                else
+                {
+                    penaltyCount();
+                    alert("failed");
+                    document.getElementById("penaltyTime").innerHTML = penalty;
+                }
             }
         </script>
 
