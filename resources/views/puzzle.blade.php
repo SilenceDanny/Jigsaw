@@ -122,9 +122,6 @@
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Progress:</div>
                 <div id="finishPercentage" style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">NaN/NaN</div>
 
-                <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Penalty:</div>
-                <div id="penaltyTime" style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">00:00:00</div>
-
                 <div style="font-size:40px;line-height: 50px;color: #fff;font-weight: 600;background-color: #2C3E50">Rank:</div>
                 <?php
                     $rankList =PuzzleRank::where('puzzle_id',$puzzle_id)
@@ -162,18 +159,17 @@
                     <div style="font-size:25px;line-height: 50px;color: #fff;font-weight: 400;background-color: #2C3E50">{{$rankTime}}</div>
                 @endfor
 
-
-                <button id="check" onclick="checkSubmit()">Submit</button>
-
                 {{-- <form name="rank" action="saveRank" method="POST" enctype="multipart/form-data"> --}}
-                <form name="rank" action="saveRank" method="POST" enctype="multipart/form-data" onsubmit="return saveReport();">
+                <form id="rankSubmit" name="rank" action="saveRank" method="POST" enctype="multipart/form-data" onsubmit="return saveReport();">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <input id="Puzzle_id" type="hidden" name="Puzzle_id" value="">
                     <input id="Player_id" type="hidden" name="Player_id" value="">
                     <input id="Player_name" type="hidden" name="Player_name" value="">
                     <input id="Time" type="hidden" name="Time" value="">
-                    <button id="rankSubmit" type="submit" disabled="true">Exit Game</button>
+                    {{-- <button id="rankSubmit" type="submit" disabled="true">Submit Record</button> --}}
                 </form>
+
+                <button onclick="window.location.href='/'">Exit Game</button>
             </div>
         {{-- 拼图场景 --}}
             <div id="main" style="position:absolute;z-index: -1;"></div> 
@@ -194,6 +190,7 @@
 
             var checkarray = new Array();
             var isFinished = 0;
+            var isSuccess = 0;
             var penalty = "";
             var penaltyHH = 0;
             var penaltyMM = 0;
@@ -576,6 +573,28 @@
                 }
                 document.getElementById("dtime").innerHTML = gameTime;
                 document.getElementById("finishPercentage").innerHTML = checkarray[4].sum() + "/" + mode;
+                if(isFinished == 0)
+                {
+                    if(checkarray[4].sum() == mode)
+                    {
+                        if(checkarray[3].sum() == mode)
+                        {
+                            isFinished = 1;
+                            alert("Success");
+
+                            var totaltime = HH*3600+mm*60+ss+penaltyHH*3600+penaltyMM*60+penaltySS;
+
+                            var tmp_puzzle_id = <?php echo $puzzle_id;?>;
+                            var tmp_player_id = <?php echo Auth::user()->id;?>;
+                            var tmp_player_name = "<?php echo Auth::user()->name;?>";
+                            document.getElementById("Puzzle_id").value = tmp_puzzle_id;
+                            document.getElementById("Player_id").value = tmp_player_id;
+                            document.getElementById("Player_name").value = tmp_player_name;
+                            document.getElementById("Time").value = totaltime;
+                            document.getElementById("rankSubmit").submit();
+                        }
+                    }
+                }   
             },1000);
         };
         </script>
@@ -615,39 +634,6 @@
                     document.getElementById("Time").value = totaltime;
 
                 }
-                else
-                {
-                    penaltyCount();
-                    alert("failed");
-                    document.getElementById("penaltyTime").innerHTML = penalty;
-                }
-            }
-        </script>
-
-
-
-
-
-        <script type="text/javascript">
-            var penaltyCount = function()
-            {
-                penalty = "";
-                penaltySS+=30;
-                if(penaltySS>=60)
-                {
-                    penaltyMM++;
-                    if(penaltyMM==60)
-                    {
-                        penaltyHH++;
-                        penaltyMM=0;
-                    }
-                    penaltySS = penaltySS-60;
-                }
-                penalty+=penaltyHH<10?"0"+penaltyHH:penaltyHH;
-                penalty+=":";
-                penalty+=penaltyMM<10?"0"+penaltyMM:penaltyMM;
-                penalty+=":";
-                penalty+=penaltySS<10?"0"+penaltySS:penaltySS;
             }
         </script>
     </body>

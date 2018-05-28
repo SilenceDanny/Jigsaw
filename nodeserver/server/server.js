@@ -13,7 +13,7 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
     var uuid = require('node-uuid');
     var client_uuid = uuid.v4();
 
-    console.log('client connected');
+    console.log("client <"+client_uuid+"> connected.");
     ws.on('message', function (message) {   //绑定message事件，处理函数为message
         messageMark = message.split('#');
         //console.log(messageMark[4]);
@@ -23,7 +23,6 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
         }
         else if(messageMark[0] == 'C')
         {
-            console.log(messageMark);
             collaManager.createGame(
                 messageMark[1],messageMark,client_uuid,ws,messageMark[3],messageMark[4],messageMark[5].split(",")
             );
@@ -37,6 +36,10 @@ wss.on('connection', function (ws) {   //绑定connection事件，处理函数�
         {
             collaManager.serverList(ws);
         }
+    });
+    ws.on('close', function(){
+        console.log("client <"+client_uuid+"> left.");
+        collaManager.removePlayer(client_uuid);
     });
 });
 
